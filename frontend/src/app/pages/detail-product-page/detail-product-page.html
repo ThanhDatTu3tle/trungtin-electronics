@@ -1,0 +1,219 @@
+<div class="main-content">
+    <div class="container mx-auto w-fit" style="max-width: 1200px;">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-container w-full p-3">
+            <p-breadcrumb [home]="home" [model]="items"></p-breadcrumb>
+        </div>
+
+        <div class="my-2"></div>
+
+        <!-- Main content -->
+        @if (isProductLoading) {
+        <div class="flex justify-content-center align-items-center" style="min-height: 400px;">
+            <i class="pi pi-spin pi-spinner" style="font-size: 3rem;"></i>
+        </div>
+        } @else if (product) {
+        <div class="grid w-full h-full">
+            <!-- Left image gallery -->
+            <div class="col-12 md:col-6 lg:col-6">
+                <p-galleria [value]="productImages" [responsiveOptions]="galleriaResponsiveOptions" [numVisible]="5"
+                    [circular]="true" [showItemNavigators]="true" [showThumbnails]="true"
+                    [thumbnailsPosition]="'bottom'" [containerStyle]="{ 'max-width': '100%' }">
+                    <ng-template #item let-item>
+                        <img [src]="item.itemImageSrc" [alt]="item.alt" style="width: 100%; display: block;" />
+                    </ng-template>
+                    <ng-template #thumbnail let-item>
+                        <div class="grid grid-nogutter justify-content-center">
+                            <img [src]="item.thumbnailImageSrc" [alt]="item.alt"
+                                style="display: block; width: 60px; height: 60px; object-fit: contain;" />
+                        </div>
+                    </ng-template>
+                </p-galleria>
+            </div>
+
+            <!-- Right info -->
+            <div class="col-12 md:col-6 lg:col-6 flex flex-column gap-3">
+                <!-- Product name -->
+                <h1 class="product-name text-3xl font-bold m-0">{{ product.productName }}</h1>
+
+                <!-- Product code -->
+                <p class="product-code text-lg text-500 m-0">Mã sản phẩm: <span class="font-semibold">{{ product.code
+                        }}</span></p>
+
+                <!-- Tags -->
+                <div class="flex gap-2 flex-wrap">
+                    @if (product.isNew) {
+                    <p-tag value="Mới" severity="success"></p-tag>
+                    }
+                    @if (product.isFeatured) {
+                    <p-tag value="Nổi bật" severity="warn"></p-tag>
+                    }
+                    @if (product.productTags && product.productTags.length > 0) {
+                    @for (tag of product.productTags; track tag) {
+                    <p-tag [value]="tag" severity="info"></p-tag>
+                    }
+                    }
+                </div>
+
+                <!-- Brand and Category -->
+                <div class="flex flex-column gap-2">
+                    @if (product.brand) {
+                    <p class="m-0"><span class="font-semibold">Thương hiệu:</span> {{ product.brand }}</p>
+                    }
+                    @if (product.categoryName) {
+                    <p class="m-0"><span class="font-semibold">Danh mục:</span> {{ product.categoryName }}</p>
+                    }
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Price -->
+                <div class="price-section">
+                    @if (product.discountPrice) {
+                    <div class="flex align-items-center gap-3">
+                        <span class="original-price text-xl text-500 line-through">{{ product.price | number }} đ</span>
+                        <span class="discount-price text-3xl font-bold text-primary">{{ product.discountPrice | number
+                            }} đ</span>
+                    </div>
+                    } @else {
+                    <span class="current-price text-3xl font-bold" style="color: #01482a;">{{ product.price | number }}
+                        đ</span>
+                    }
+                </div>
+
+                <!-- Stock -->
+                <div class="stock-section">
+                    @if (product.stock > 0) {
+                    <p class="text-green-600 font-semibold m-0">
+                        <i class="pi pi-check-circle mr-2"></i>Còn hàng ({{ product.stock }} sản phẩm)
+                    </p>
+                    } @else {
+                    <p class="text-red-600 font-semibold m-0">
+                        <i class="pi pi-times-circle mr-2"></i>Hết hàng
+                    </p>
+                    }
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Description -->
+                @if (product.description) {
+                <div class="description-section">
+                    <h3 class="text-lg font-semibold mb-2">Mô tả sản phẩm</h3>
+                    <p class="line-height-3 text-color-secondary">{{ product.description }}</p>
+                </div>
+                }
+
+                <!-- Action buttons -->
+                <div class="action-buttons flex gap-2 flex-wrap mt-3">
+                    <p-button label="Thêm vào giỏ hàng" icon="pi pi-shopping-cart" (onClick)="addToCart(product)"
+                        [disabled]="product.stock <= 0" styleClass="flex-1"></p-button>
+                    <p-button [label]="isInWishlist(product.productId) ? 'Đã yêu thích' : 'Yêu thích'"
+                        [icon]="isInWishlist(product.productId) ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                        (onClick)="toggleWishlist(product)" severity="secondary"
+                        [outlined]="!isInWishlist(product.productId)"
+                        [style]="isInWishlist(product.productId) ? {'color': '#ef4444'} : {}"
+                        styleClass="flex-1"></p-button>
+                </div>
+            </div>
+        </div>
+
+        <div class="my-3"></div>
+
+        <!-- Thông số & Đặc điểm -->
+        <div class="w-full flex flex-column align-items-center gap-3">
+            <p-panel header="Đặc điểm nổi bật" [toggleable]="true" [collapsed]="false" style="width: 100%;">
+                <p class="m-0 line-height-3">
+                    @if (product.description) {
+                    {{ product.description }}
+                    } @else {
+                    Thông tin đặc điểm sản phẩm đang được cập nhật.
+                    }
+                </p>
+            </p-panel>
+
+            <p-panel header="Thông số kỹ thuật" [toggleable]="true" [collapsed]="true" style="width: 100%;">
+                <div class="specs-table">
+                    <div class="spec-row">
+                        <span class="spec-label">Mã sản phẩm:</span>
+                        <span class="spec-value">{{ product.code }}</span>
+                    </div>
+                    @if (product.brand) {
+                    <div class="spec-row">
+                        <span class="spec-label">Thương hiệu:</span>
+                        <span class="spec-value">{{ product.brand }}</span>
+                    </div>
+                    }
+                    <div class="spec-row">
+                        <span class="spec-label">Danh mục:</span>
+                        <span class="spec-value">{{ product.categoryName }}</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Tình trạng:</span>
+                        <span class="spec-value">{{ product.stock > 0 ? 'Còn hàng' : 'Hết hàng' }}</span>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+
+        <div class="my-3"></div>
+
+        <!-- Related Products -->
+        @if (relatedProducts.length > 0) {
+        <div class="related-products-section">
+            <div class="section-header flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title font-bold text-2xl m-0">Sản phẩm cùng danh mục</h2>
+            </div>
+
+            <div class="grid">
+                @if (isRelatedProductsLoading) {
+                <div class="col-12 flex justify-content-center">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                </div>
+                } @else {
+                @for (p of relatedProducts; track p.productId) {
+                <div class="col-6 md:col-4 lg:col-3 p-2">
+                    <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
+                        [tags]="p.productTags" [isInWishlist]="isInWishlist(p.productId)" [isLoadingProduct]="true"
+                        (addToWishlist)="toggleWishlist(p)" (addToCart)="addToCart(p)">
+                    </app-product-card>
+                </div>
+                }
+                }
+            </div>
+        </div>
+
+        <div class="my-3"></div>
+        }
+
+        <!-- Viewed Products -->
+        @if (viewedProducts.length > 1) {
+        <div class="viewed-products-section">
+            <div class="section-header flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title font-bold text-2xl m-0">Sản phẩm đã xem</h2>
+            </div>
+
+            <div class="viewed-products-carousel">
+                <div class="grid">
+                    @for (p of viewedProducts.slice(0, 8); track p.productId) {
+                    @if (p.productId !== product.productId) {
+                    <div class="col-6 md:col-4 lg:col-3 p-2">
+                        <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price"
+                            [imageUrl]="p.imageUrl" [tags]="p.productTags" [isInWishlist]="isInWishlist(p.productId)"
+                            [isLoadingProduct]="true" (addToWishlist)="toggleWishlist(p)" (addToCart)="addToCart(p)">
+                        </app-product-card>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+        }
+        } @else {
+        <div class="flex flex-column justify-content-center align-items-center" style="min-height: 400px;">
+            <i class="pi pi-exclamation-triangle text-5xl text-orange-500 mb-3"></i>
+            <p class="text-xl">Không tìm thấy sản phẩm</p>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<p-toast />
+<div class="wapper flex flex-column">
+  <div class="register-page flex align-items-center justify-content-center min-h-screen surface-ground">
+    <div class="register-card w-full sm:w-10 md:w-6 lg:w-4 p-5 border-round-2xl shadow-4 surface-card">
+      <div class="flex flex-row w-full h-fit align-items-end justify-content-end">
+        <button pButton label="Về trang chủ" (click)="routeToHomePage()" class="w-10rem"></button>
+      </div>
+      
+      <h2 class="text-center mb-4 font-bold text-2xl">Đăng nhập với tư cách Admin</h2>
+
+      <form [formGroup]="exampleForm" (ngSubmit)="onSubmit()" class="flex flex-column gap-4">
+        <!-- Username -->
+        <div class="flex flex-column gap-1">
+          <input pInputText type="text"
+                formControlName="username"
+                placeholder="Tên đăng nhập hoặc Email hoặc Số điện thoại"
+                [invalid]="isInvalid('username')" />
+
+          @if (isInvalid('username')) {
+            @if (exampleForm.get('username')?.errors?.['required']) {
+              <p-message severity="error" size="small" variant="simple">
+                Trường này là bắt buộc.
+              </p-message>
+            }
+
+            @if (exampleForm.get('username')?.errors?.['invalidFormat']) {
+              <p-message severity="error" size="small" variant="simple">
+                Vui lòng nhập đúng Username, Email hoặc Số điện thoại.
+              </p-message>
+            }
+          }
+        </div>
+
+        <!-- Password -->
+        <div class="flex flex-column gap-1">
+          <input pInputText type="password" id="password" placeholder="Mật khẩu" formControlName="password"
+            [invalid]="isInvalid('password')"
+          />
+          @if (isInvalid('password')) {
+            @if (exampleForm.get('password')?.errors?.['required']) {
+              <p-message severity="error" size="small" variant="simple">
+                Mật khẩu là bắt buộc.
+              </p-message>
+            }
+            @if (exampleForm.get('password')?.errors?.['minlength']) {
+              <p-message severity="error" size="small" variant="simple">
+                Mật khẩu phải có ít nhất 3 ký tự.
+              </p-message>
+            }
+          }
+        </div>
+
+        <!-- Submit -->
+        <button pButton type="submit" [loading]="loading" label="Đăng nhập" class="w-full"></button>
+      </form>
+    </div>
+  </div>
+</div>

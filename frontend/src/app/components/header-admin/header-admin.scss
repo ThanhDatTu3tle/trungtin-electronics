@@ -1,0 +1,49 @@
+:host {
+  width: 100%;
+  display: block;
+  background-color: var(--color-text-light);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-menu .p-menuitem-link.p-menuitem-link-active {
+  background-color: var(--color-brand-light) !important;
+  color: var(--color-text-light) !important;
+  font-weight: 600;
+}
+
+.admin-menu .p-menuitem-link.p-menuitem-link-active .pi {
+  color: var(--color-text-light) !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* MENU ITEM */
+.menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  color: var(--color-text-dark);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+/* Hover màu nhạt của brand */
+.menu-item:hover {
+  background-color: rgba(1, 72, 42, 0.08); /* color-brand nhạt 8% */
+}
+
+/* ACTIVE */
+.menu-item.active {
+  background: var(--color-brand-light);       /* Màu sáng hơn brand */
+  color: var(--color-text-light);             /* Chữ trắng */
+  font-weight: 600;
+}
+
+.menu-item.active i {
+  color: var(--color-text-light);             /* Icon trắng */
+}

@@ -1,0 +1,82 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="main-content">
+    <div class="container mx-auto" style="max-width: 1200px;">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-container w-full p-3">
+            <p-breadcrumb [home]="home" [model]="breadcrumbItems"></p-breadcrumb>
+        </div>
+
+        <div class="my-3"></div>
+
+        <!-- Page Title -->
+        <div class="flex justify-content-between align-items-center mb-4">
+            <h1 class="text-3xl font-bold m-0">Danh sách yêu thích</h1>
+            @if ((wishlistCount$ | async) && (wishlistCount$ | async)! > 0) {
+            <p-button label="Xóa tất cả" icon="pi pi-trash" severity="danger" [outlined]="true"
+                (onClick)="clearWishlist()">
+            </p-button>
+            }
+        </div>
+
+        <!-- Wishlist Content -->
+        @if ((wishlistCount$ | async) && (wishlistCount$ | async)! > 0) {
+        <div class="wishlist-items-container">
+            @for (item of (wishlistItems$ | async); track item.productId) {
+            <div class="wishlist-item surface-card p-3 mb-3 border-round shadow-1">
+                <div class="grid align-items-center">
+                    <!-- Product Image -->
+                    <div class="col-3 md:col-2">
+                        <img [src]="item.imageUrl" [alt]="item.productName" class="wishlist-item-image cursor-pointer"
+                            (click)="viewProduct(item.code, item.productName)" />
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="col-9 md:col-6">
+                        <h3 class="wishlist-item-name m-0 mb-2 cursor-pointer hover:text-primary"
+                            (click)="viewProduct(item.code, item.productName)">
+                            {{ item.productName }}
+                        </h3>
+                        <p class="text-sm text-500 m-0 mb-1">Mã: {{ item.code }}</p>
+                        @if (item.discountPrice) {
+                        <div class="flex align-items-center gap-2">
+                            <span class="text-500 line-through text-sm">{{ item.price | number }} đ</span>
+                            <span class="text-primary font-semibold">{{ item.discountPrice | number }} đ</span>
+                        </div>
+                        } @else {
+                        <span class="font-semibold" style="color: #01482a;">{{ item.price | number }} đ</span>
+                        }
+                        <!-- <p class="text-xs text-500 m-0 mt-1">Còn {{ item.stock }} sản phẩm</p> -->
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="col-12 md:col-4 flex justify-content-end align-items-center gap-2">
+                        <p-button label="Thêm vào giỏ" icon="pi pi-shopping-cart" size="small"
+                            [disabled]="item.stock === 0" (onClick)="addToCart(item)">
+                        </p-button>
+                        <p-button icon="pi pi-trash" severity="danger" [outlined]="true" size="small"
+                            (onClick)="removeItem(item.productId)" pTooltip="Xóa khỏi danh sách yêu thích"
+                            tooltipPosition="left">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <!-- Empty Wishlist State -->
+        <div class="empty-wishlist text-center py-8">
+            <div class="empty-wishlist-icon mb-4">
+                <i class="pi pi-heart" style="font-size: 6rem; color: var(--surface-400);"></i>
+            </div>
+            <h2 class="text-2xl font-semibold mb-2">Danh sách yêu thích trống</h2>
+            <p class="text-600 mb-4">Hãy thêm sản phẩm vào danh sách yêu thích để xem lại sau</p>
+            <p-button label="Tiếp tục mua hàng" icon="pi pi-arrow-left" (onClick)="continueShopping()">
+            </p-button>
+        </div>
+        }
+
+    </div>
+</div>

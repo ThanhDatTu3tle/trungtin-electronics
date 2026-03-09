@@ -1,0 +1,105 @@
+.main-content {
+  width: 100vw;
+  padding: 0 0;
+  overflow-x: hidden;
+}
+
+.category-rail {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 1.5rem;
+  padding: 0.75rem 0.5rem;
+  scrollbar-width: none;
+  width: 100%;
+  max-width: 100vw; /* 👈 Thêm dòng này để tránh cắt ngang */
+
+  @media (min-width: 1280px) {
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+}
+
+.category-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  text-align: center;
+  width: 72px;
+
+  .chip-btn {
+    width: 64px;
+    height: 64px;
+    background-color: #fff;
+    border-radius: 1rem;
+    transition: 0.2s;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
+    @media (min-width: 1024px) {
+      width: 72px;
+      height: 72px;
+    }
+  }
+
+  .chip-btn.active,
+  .chip-btn:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+  }
+
+  .icon {
+    width: 36px;
+    height: 36px;
+
+    @media (min-width: 1280px) {
+      width: 42px;
+      height: 42px;
+    }
+  }
+
+  .caption {
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+
+    @media (max-width: 768px) {
+      font-size: 0.6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    width: 88px;
+  }
+}
+
+.section-title {
+  color: var(--color-text-dark);
+}
+
+.spotlight {
+  border-radius: 1rem;
+
+  .spotlight-name {
+    color: var(--color-text-dark);
+  }
+
+  .spotlight-model {
+    color: var(--text-color-secondary);
+  }
+
+  .spotlight-price {
+    color: var(--primary-color);
+  }
+
+  @media (max-width: 768px) {
+    display: none;;
+  }
+}

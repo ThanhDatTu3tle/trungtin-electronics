@@ -1,0 +1,123 @@
+.product-card {
+  width: 100%;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Tag khuyến mãi */
+.product-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  z-index: 2;
+
+  &.discount-tag {
+    background: linear-gradient(135deg, #ff6b6b 0%, #e53935 100%);
+    animation: pulse-discount 2s infinite;
+  }
+}
+
+@keyframes pulse-discount {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 8px 4px rgba(229, 57, 53, 0.2);
+  }
+}
+
+/* Icon góc phải */
+.product-icons {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+
+  i {
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}
+
+/* Ảnh sản phẩm */
+.product-image {
+  width: 100%;
+  height: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.5rem;
+  }
+}
+
+/* Nội dung */
+.product-content {
+  text-align: center;
+
+  .product-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    min-height: 2.5rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+  }
+
+  .product-code {
+    color: var(--text-color-secondary);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .product-price-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .product-price-original {
+    color: var(--text-color-secondary);
+    font-size: 0.85rem;
+    text-decoration: line-through;
+    margin: 0;
+  }
+
+  .product-price {
+    color: #0e5b3f;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0;
+
+    &.discounted {
+      color: #e53935;
+      font-size: 1.1rem;
+    }
+  }
+}

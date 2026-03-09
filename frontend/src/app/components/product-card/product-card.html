@@ -1,0 +1,50 @@
+@if (isLoadingProduct) {
+<div class="product-card surface-card shadow-2 p-2 relative cursor-pointer">
+  <!-- Tag góc trái -->
+  @if (discountPercent && discountPercent > 0) {
+  <div class="product-tag discount-tag">
+    <span class="product-badge">
+      -{{ discountPercent }}%
+    </span>
+  </div>
+  } @else if (tags && tags.length > 0) {
+  <div class="product-tag">
+    <span class="product-badge">
+      {{ tags[0] }}
+    </span>
+  </div>
+  }
+
+  <!-- Icon wishlist + cart -->
+  <div class="product-icons">
+    <i class="pi" [ngClass]="isInWishlist ? 'pi-heart-fill' : 'pi-heart'"
+      [style.color]="isInWishlist ? '#ef4444' : 'var(--color-text-dark)'" (click)="toggleWishlist()"
+      style="cursor: pointer; font-size: 1.2rem"></i>
+    <i class="pi pi-shopping-cart text-500 hover:text-green-600" (click)="addCart()"
+      style="cursor:pointer; font-size:1.2rem"></i>
+  </div>
+
+  <!-- Ảnh sản phẩm -->
+  <div class="product-image">
+    <img [src]="imageUrl" [alt]="name" />
+  </div>
+
+  <!-- Nội dung -->
+  <div class="product-content text-center p-3">
+    <h3 class="product-title">{{ name }}</h3>
+    <p class="product-code">{{ code }}</p>
+    @if (discountedPrice) {
+    <div class="product-price-wrapper">
+      <p class="product-price-original">{{ price | number }} đ</p>
+      <p class="product-price discounted">{{ discountedPrice | number }} đ</p>
+    </div>
+    } @else {
+    <p class="product-price">{{ price | number }} đ</p>
+    }
+    <p-button label="Đọc thêm" class="mt-4" styleClass="background-color: #0e5b3f;"
+      (click)="routeToDetail(name, code)"></p-button>
+  </div>
+</div>
+} @else {
+<app-product-card-skeleton></app-product-card-skeleton>
+}

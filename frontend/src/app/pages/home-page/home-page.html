@@ -1,0 +1,154 @@
+<!-- Carousel -->
+<div class="w-screen">
+  <app-carousel style="width: 100%;"></app-carousel>
+</div>
+
+<div class="main-content">
+  <div class="container mx-auto" style="max-width: 1200px; width: 100%">
+    <!-- Các danh mục -->
+    <div class="category-rail flex align-items-start" role="list">
+      @for (c of categories; track c.key) {
+      <div class="chip flex flex-column align-items-center" role="listitem">
+        <button
+          class="chip-btn border-none cursor-pointer flex align-items-center justify-content-center border-round-lg"
+          [ngClass]="{ 'active': c.key == active }" (click)="active = c.key">
+          <img class="icon" [src]="c.icon" [alt]="c.categoryName" />
+        </button>
+        <div class="caption mt-2 text-center">{{ c.categoryName }}</div>
+      </div>
+      }
+    </div>
+
+    <div class="my-4"></div>
+
+    <!-- Sản phẩm nổi bật -->
+    <div class="section-header flex justify-content-between align-items-center mb-3 p-2">
+      <div class="section-title font-bold text-2xl">Sản phẩm nổi bật</div>
+      <i class="pi pi-arrow-right icon-action cursor-pointer" style="font-size: 1.5rem;" pTooltip="Xem chi tiết"
+        aria-hidden="true"></i>
+    </div>
+
+    <div class="grid align-items-start justify-content-between p-2">
+      <!-- Left: product cards -->
+      <div class="col-12 lg:col-8">
+        <div class="grid m-0">
+          @if (!isProductLoaded) {
+          @for (s of skeletonItems; track $index) {
+          <div class="col-6 md:col-4 lg:col-4 p-2">
+            <app-product-card [isLoadingProduct]="false"></app-product-card>
+          </div>
+          }
+          } @else {
+          @for (p of productListOutstanding; track p.productId) {
+          <div class="col-6 md:col-4 lg:col-4 p-2">
+            <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
+              [tags]="p.productTags" [isInWishlist]="isInWishlist(p.productId)" [isLoadingProduct]="true"
+              (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+            </app-product-card>
+          </div>
+          }
+          }
+        </div>
+      </div>
+
+      <!-- Right: spotlight -->
+      <div class="col-12 lg:col-4 p-3">
+        <div class="spotlight p-3 shadow-2">
+          <div class="grid">
+            <div class="col-12 md:col-6">
+              <app-product-galleria [dataImage]="images" [position]="'bottom'" [widthImageSrc]="100"
+                [widthImageThumb]="75">
+              </app-product-galleria>
+            </div>
+
+            <div class="col-12 md:col-6">
+              <p class="spotlight-name font-medium text-xl mb-1">Máy cắt sắt Dekton 355mm</p>
+              <p class="spotlight-model text-sm mb-2">Model: DT355</p>
+              <p class="spotlight-desc mb-3 line-height-3">
+                Bàn cắt thép 355mm, motor đồng, khung thép chắc, thước chặn nhanh.
+              </p>
+
+              <div>
+                <div class="spotlight-price text-primary font-bold text-lg mb-2">3,190,000 đ</div>
+                <div class="spotlight-actions flex gap-2">
+                  <button pButton label="Thêm vào giỏ" class="p-button-text"></button>
+                  <button pButton label="Xem chi tiết" class="p-button-secondary"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="my-4"></div>
+
+    <!-- Sản phẩm mới -->
+    <div class="section-header flex justify-content-between align-items-center mb-3 p-2">
+      <div class="section-title font-bold text-2xl">Sản phẩm mới</div>
+      <i class="pi pi-arrow-right icon-action cursor-pointer" style="font-size: 1.5rem;" pTooltip="Xem chi tiết"
+        aria-hidden="true"></i>
+    </div>
+
+    <div class="grid align-items-start justify-content-start p-3">
+      @if (!isProductLoaded) {
+      @for (s of skeletonItems; track $index) {
+      <div class="col-6 md:col-4 lg:col-3 p-2">
+        <app-product-card [isLoadingProduct]="false"></app-product-card>
+      </div>
+      }
+      } @else {
+      @for (p of productListNew; track p.productId) {
+      <div class="col-6 md:col-4 lg:col-3 p-2" pAnimateOnScroll>
+        <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
+          [tags]="p.productTags" [isInWishlist]="isInWishlist(p.productId)" [isLoadingProduct]="true"
+          (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+        </app-product-card>
+      </div>
+      }
+      }
+    </div>
+
+    <div class="my-4"></div>
+
+    <!-- Khuyến mãi -->
+    <div class="section-header flex justify-content-between align-items-center mb-3 p-2">
+      <div class="section-title font-bold text-2xl">Khuyến mãi</div>
+      <i class="pi pi-arrow-right icon-action cursor-pointer" pTooltip="Xem chi tiết" aria-hidden="true"></i>
+    </div>
+
+    <div class="grid align-items-start justify-content-start p-3">
+      @if (!isProductLoaded) {
+      @for (s of skeletonItems; track $index) {
+      <div class="col-6 md:col-4 lg:col-3 p-2">
+        <app-product-card [isLoadingProduct]="false"></app-product-card>
+      </div>
+      }
+      } @else {
+      @for (p of productListDiscount; track p.productId) {
+      <div class="col-6 md:col-4 lg:col-3 p-2" pAnimateOnScroll>
+        <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
+          [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)"
+          [isLoadingProduct]="true" (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+        </app-product-card>
+      </div>
+      }
+      @if (productListDiscount.length === 0) {
+      <div class="col-12 text-center text-500 py-4">
+        <i class="pi pi-tag text-4xl mb-2"></i>
+        <p>Hiện chưa có sản phẩm khuyến mãi</p>
+      </div>
+      }
+      }
+    </div>
+
+    <div class="my-4"></div>
+
+    <!-- Phụ kiện -->
+    <div class="section-header flex justify-content-between align-items-center mb-3 p-2">
+      <div class="section-title font-bold text-2xl">Phụ kiện</div>
+      <i class="pi pi-arrow-right icon-action cursor-pointer" pTooltip="Xem chi tiết" aria-hidden="true"></i>
+    </div>
+
+  </div> <!-- /container -->
+</div>

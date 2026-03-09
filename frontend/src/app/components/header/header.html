@@ -1,0 +1,214 @@
+<p-toast />
+<header class="header-container">
+  <div class="header-top">
+    <!-- Logo -->
+    <a [routerLink]="['/']" class="logo-link">
+      <img src="assets/image/logo/mini_logo.png" alt="Trung Tín" class="logo-img" />
+    </a>
+
+    <!-- Desktop Menu -->
+    @if (isLogPage) {
+    @if (isSign) {
+    <nav class="nav-menu">
+      <p class="m-0 cursor-pointer" pTooltip="Xem hồ sơ" (click)="routeToInfo()"><i class="pi pi-user"></i> Xin chào, {{
+        userInfo?.username }}</p>
+      <p class="m-0 cursor-pointer" (click)="logout()"><i class="pi pi-sign-out"></i></p>
+    </nav>
+    } @else {
+    <nav class="nav-menu">
+      <p class="m-0 cursor-pointer" (click)="routeToLogin()">
+        <i class="pi pi-user"></i> Đăng nhập
+      </p>
+      <p class="m-0 cursor-pointer" (click)="routeToRegister()"><i class="pi pi-sign-in"></i> Đăng ký</p>
+    </nav>
+    }
+    }
+
+    <!-- Mobile -->
+    <div class="mobile-menu">
+      <button (click)="toggleSidebar()" class="menu-btn">
+        <i class="pi pi-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <p-drawer [(visible)]="sidebarOpen" position="left" styleClass="drawer-custom">
+    <nav class="drawer-nav">
+      <a routerLink="/stores" (click)="sidebarOpen=false"><i class="pi pi-map-marker"></i> Địa điểm mua hàng</a>
+      <a routerLink="/contact" (click)="sidebarOpen=false"><i class="pi pi-phone"></i> Liên hệ</a>
+      <a routerLink="/tech" (click)="sidebarOpen=false"><i class="pi pi-book"></i> Góc kỹ thuật</a>
+      @if (isSign) {
+      <p class="m-0 cursor-pointer" (click)="routeToInfo()"><i class="pi pi-user"></i> Xem hồ sơ</p>
+      <p class="m-0 cursor-pointer" (click)="logout()"><i class="pi pi-sign-out"></i> Đăng xuất</p>
+      } @else {
+      <p class="m-0 cursor-pointer" (click)="routeToLogin()">
+        <i class="pi pi-user"></i> Đăng nhập
+      </p>
+      <p class="m-0 cursor-pointer" (click)="routeToRegister()"><i class="pi pi-sign-in"></i> Đăng ký</p>
+      }
+    </nav>
+  </p-drawer>
+</header>
+
+<!-- Bottom bar -->
+<div class="header-bottom">
+  <div class="bottom-content">
+    <nav class="nav-links">
+      <a routerLink="/stores"><i class="pi pi-map-marker"></i> Địa điểm mua hàng</a>
+      <a routerLink="/contact"><i class="pi pi-phone"></i> Liên hệ</a>
+      <a routerLink="/tech"><i class="pi pi-book"></i> Góc kỹ thuật</a>
+    </nav>
+
+    <!-- Search + Cart -->
+    <div class="right-actions">
+      <p-iconfield class="search-field" [class.search-active]="isSearch">
+        <p-inputicon class="pi pi-search" />
+        <p-floatlabel variant="on">
+          <input id="valueSearch" pInputText [(ngModel)]="valueSearch" autocomplete="off" />
+          <label for="valueSearch">Tìm kiếm</label>
+        </p-floatlabel>
+      </p-iconfield>
+
+      <a routerLink="/wishlist" class="icon-btn wishlist-icon-wrapper" [class.wishlist-shake]="wishlistShakeAnimation">
+        <i class="pi pi-heart" pBadge [value]="(wishlistCount$ | async)?.toString() || ''" severity="danger"></i>
+      </a>
+
+      <a routerLink="/carts" class="icon-btn cart-icon-wrapper" [class.cart-shake]="cartShakeAnimation">
+        <i class="pi pi-shopping-cart" pBadge [value]="(cartCount$ | async)?.toString() || ''" severity="danger"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog ĐĂNG NHẬP -->
+<p-dialog header="Đăng nhập" [modal]="true" [(visible)]="visibleLogIn" [style]="{ width: '25rem' }"
+  (onShow)="renderGoogleButton()">
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="flex flex-column gap-4">
+    <!-- Username -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="text" formControlName="username" placeholder="Tên đăng nhập hoặc Email hoặc Số điện thoại"
+        [invalid]="isInvalidLogin('username')" />
+      @if (isInvalidLogin('username')) {
+      @if (loginForm.get('username')?.errors?.['required']) {
+      <p-message severity="error" size="small" variant="simple">
+        Trường này là bắt buộc.
+      </p-message>
+      }
+      @if (loginForm.get('username')?.errors?.['invalidFormat']) {
+      <p-message severity="error" size="small" variant="simple">
+        Vui lòng nhập đúng Username, Email hoặc Số điện thoại.
+      </p-message>
+      }
+      }
+    </div>
+    <!-- Password -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="password" id="password" placeholder="Mật khẩu" formControlName="password"
+        [invalid]="isInvalidLogin('password')" />
+      @if (isInvalidLogin('password')) {
+      @if (loginForm.get('password')?.errors?.['required']) {
+      <p-message severity="error" size="small" variant="simple">
+        Mật khẩu là bắt buộc.
+      </p-message>
+      }
+      @if (loginForm.get('password')?.errors?.['minlength']) {
+      <p-message severity="error" size="small" variant="simple">
+        Mật khẩu phải có ít nhất 3 ký tự.
+      </p-message>
+      }
+      }
+    </div>
+    <!-- Submit -->
+    <button pButton type="submit" label="Đăng nhập" class="w-full"></button>
+    <!-- Or -->
+    <div class="flex align-items-center justify-content-center gap-2 my-2">
+      <div class="h-1rem w-6rem border-top-1 surface-border"></div>
+      <span class="text-600 text-sm">Hoặc</span>
+      <div class="h-1rem w-6rem border-top-1 surface-border"></div>
+    </div>
+  </form>
+  <!-- Google Login -->
+  <div id="googleBtn"></div>
+</p-dialog>
+
+<!-- Dialog ĐĂNG KÝ -->
+<p-dialog header="Đăng ký tài khoản" [modal]="true" [(visible)]="visibleRegister" [style]="{ width: '25rem' }"
+  (onShow)="renderGoogleButton()">
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="flex flex-column gap-4">
+    <!-- Username -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="text" id="username" placeholder="Tên đăng nhập" formControlName="username"
+        [invalid]="isInvalidRegister('username')" />
+      @if (isInvalidRegister('username')) {
+      <p-message severity="error" size="small" variant="simple">
+        Tên đăng nhập là bắt buộc.
+      </p-message>
+      }
+    </div>
+    <!-- Email -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="email" id="email" placeholder="Email" formControlName="email"
+        [invalid]="isInvalidRegister('email')" />
+      @if (isInvalidRegister('email')) {
+      @if (registerForm.get('email')?.errors?.['required']) {
+      <p-message severity="error" size="small" variant="simple">
+        Email là bắt buộc.
+      </p-message>
+      }
+      @if (registerForm.get('email')?.errors?.['email']) {
+      <p-message severity="error" size="small" variant="simple">
+        Vui lòng nhập Email hợp lệ.
+      </p-message>
+      }
+      }
+    </div>
+    <!-- Fullname -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="text" id="fullName" placeholder="Họ và tên" formControlName="fullName"
+        [invalid]="isInvalidRegister('fullName')" />
+      @if (isInvalidRegister('fullName')) {
+      <p-message severity="error" size="small" variant="simple">
+        Họ và tên là bắt buộc.
+      </p-message>
+      }
+    </div>
+    <!-- Phone -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="text" id="phone" placeholder="Số điện thoại" formControlName="phone"
+        [invalid]="isInvalidRegister('phone')" (keydown.space)="$event.preventDefault()" />
+      @if (isInvalidRegister('phone')) {
+      <p-message severity="error" size="small" variant="simple">
+        Số điện thoại là bắt buộc, chứa 10 ký tự và không nhận chữ cái.
+      </p-message>
+      }
+    </div>
+    <!-- Password -->
+    <div class="flex flex-column gap-1">
+      <input pInputText type="password" id="password" placeholder="Mật khẩu" formControlName="password"
+        [invalid]="isInvalidRegister('password')" />
+      @if (isInvalidRegister('password')) {
+      @if (registerForm.get('password')?.errors?.['required']) {
+      <p-message severity="error" size="small" variant="simple">
+        Mật khẩu là bắt buộc.
+      </p-message>
+      }
+      @if (registerForm.get('password')?.errors?.['minlength']) {
+      <p-message severity="error" size="small" variant="simple">
+        Mật khẩu phải có ít nhất 6 ký tự.
+      </p-message>
+      }
+      }
+    </div>
+    <!-- Submit -->
+    <button pButton type="submit" label="Đăng ký" class="w-full"></button>
+    <!-- Or -->
+    <div class="flex align-items-center justify-content-center gap-2 my-2">
+      <div class="h-1rem w-6rem border-top-1 surface-border"></div>
+      <span class="text-600 text-sm">Hoặc</span>
+      <div class="h-1rem w-6rem border-top-1 surface-border"></div>
+    </div>
+  </form>
+  <!-- Google Register -->
+  <div id="googleBtn"></div>
+</p-dialog>

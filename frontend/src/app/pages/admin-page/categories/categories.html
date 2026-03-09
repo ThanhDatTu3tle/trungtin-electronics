@@ -1,0 +1,118 @@
+<p-toast />
+<p-confirmpopup />
+<div class="wrapper" style="margin-top: 6rem;">
+    <div class="flex flex-column md:flex-row align-items-start md:align-items-center justify-content-between w-full h-fit mb-3">
+        <p-breadcrumb [home]="home" [model]="items" />
+    
+        <p-toolbar>
+            <ng-template #start>
+                <p-button icon="pi pi-plus" pTooltip="Tạo mới danh mục" (onClick)="actionCategory('create')" class="mr-2" text severity="secondary" />
+                <p-button icon="pi pi-print" pTooltip="Xuất bản in" class="mr-2" text severity="secondary" />
+                <p-button icon="pi pi-upload" pTooltip="Import Excel" text severity="secondary" />
+            </ng-template>
+            <ng-template #center>
+                <p-iconfield iconPosition="left">
+                    <p-inputicon class="pi pi-search" />
+                    <input type="text" pInputText placeholder="Search" />
+                </p-iconfield>
+            </ng-template>
+            <ng-template #end>
+                <p-splitbutton label="Save" [model]="itemsToolbar" />
+            </ng-template>
+        </p-toolbar>
+    </div>
+
+    <!-- TABLE -->
+    <p-table [value]="categories" showGridlines>
+        <ng-template #caption>
+            <div class="flex flex-row align-items-center justify-content-between p-3">
+                <span class="text-xl font-bold">Danh mục sản phẩm</span>
+                <p-button icon="pi pi-refresh" rounded raised />
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th>Số thứ tự</th>
+                <th>Tên danh mục</th>
+                <th class="text-center">Icon</th>
+                <!-- <th>Description</th> -->
+                <th>Tạo lúc</th>
+                <th>Chỉnh sửa lúc</th>
+                <th class="text-center">Trạng thái</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-category let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ rowIndex }}</td>
+                <td>{{ category.categoryName }}</td>
+                <td class="text-center">
+                    <img
+                        [src]="category.icon"
+                        [alt]="category.categoryName"
+                        class="w-3rem rounded"
+                    />
+                </td>
+                <!-- <td>{{ category.description }}</td> -->
+                <td>{{ category.createdDate }}</td>
+                <td>{{ category.updatedDate }}</td>
+                <td class="text-center">
+                    <p-tag [value]="category.statusName" [severity]="getSeverity(category.status)" />
+                </td>
+                <td>
+                    <div class="flex flex-row align-items-center justify-content-center gap-3">
+                        <p-button icon="pi pi-pencil" pTooltip="Chỉnh sửa" (onClick)="actionCategory('update', category)" [rounded]="true" [outlined]="true" severity="info" />
+                        @if (category.status == 1) {
+                            <p-button icon="pi pi-trash" pTooltip="Xóa" (onClick)="deleteCategory($event)" [rounded]="true" [outlined]="true" severity="danger" />
+                        } @else {
+                            <p-button icon="pi pi-undo" pTooltip="Khôi phục" (onClick)="restoreCategory($event)" [rounded]="true" [outlined]="true" severity="success" />
+                        }
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #footer>
+            <tr>
+                <td colspan="6">In total there are <span class="font-bold">{{ categories ? categories.length : 0 }}</span> categories.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- Update Category Dialog -->
+<p-dialog header="Chỉnh sửa Danh mục" [(visible)]="visible" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
+    <div class="grid mt-3">
+        <div class="col-12 md:col-6 lg:col-9">
+            <div class="formgrid grid">
+                <div class="field col-3">
+                    <p-floatlabel class="w-full">
+                        <label for="categoryId">ID</label>
+                        <input pInputText class="w-full" id="categoryId" [(ngModel)]="categoryId" autocomplete="off" />
+                    </p-floatlabel>
+                </div>
+                <div class="field col-9">
+                    <p-floatlabel class="w-full">
+                        <label for="categoryName">Tên danh mục</label>
+                        <input pInputText class="w-full" id="categoryName" [(ngModel)]="categoryName" autocomplete="off" />
+                    </p-floatlabel>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 md:col-6 lg:col-3">
+            <p-floatlabel class="w-full">
+                <label for="key">Key</label>
+                <input pInputText class="w-full" id="key" [(ngModel)]="key" autocomplete="off" />
+            </p-floatlabel>
+        </div>
+        <div class="col-12 md:col-6 lg:col-6">
+            <p-floatlabel>
+                <textarea pTextarea id="description" [(ngModel)]="description" rows="5" cols="40" style="resize: none" class="h-full"></textarea>
+                <label for="description">Mô tả</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-12 md:col-6 lg:col-6">
+            <p-fileupload #fu mode="basic" chooseLabel="Chọn icon" chooseIcon="pi pi-upload" name="demo[]" (onSelect)="onSelectFile($event)"
+                url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000" (onUpload)="onUploadIcon($event)" />
+        </div>
+    </div>
+</p-dialog>

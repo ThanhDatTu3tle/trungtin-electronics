@@ -1,0 +1,14 @@
+﻿# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+# Backend
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+# Environment / secrets
+**/.env
+**/appsettings.Development.json
+# OS
+.DS_Store
+Thumbs.db

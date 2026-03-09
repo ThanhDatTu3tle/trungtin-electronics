@@ -1,0 +1,9 @@
+<p-galleria [value]="dataImage" [responsiveOptions]="responsiveOptions" [showThumbnails]="true" [thumbnailsPosition]="position"
+    [containerStyle]="{ 'min-width': '100%', 'border': 'none' }" [numVisible]="numVisible" [autoPlay]="true" [circular]="true">
+    <ng-template #item let-item>
+        <img [src]="item.itemImageSrc" [ngStyle]="{ 'width': widthImageSrc + '%' }" />
+    </ng-template>
+    <ng-template #thumbnail let-item>
+        <img [src]="item.thumbnailImageSrc" [ngStyle]="{ 'width': widthImageThumb + '%' }" />
+    </ng-template>
+</p-galleria>

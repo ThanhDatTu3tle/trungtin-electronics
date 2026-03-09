@@ -1,0 +1,29 @@
+<div class="main-content">
+    <div class="container mx-auto" style="max-width: 1200px">
+        <div class="grid align-items-start justify-content-between p-2 w-full mt-3">
+            <!-- Left: avatar -->
+            <div class="col-12 lg:col-4 p-2">
+                <div class="w-full flex flex-column align-items-center justify-content-center gap-3 p-3 shadow-2 border-round-2xl">
+                    <p-avatar icon="pi pi-user" class="mr-2" size="xlarge" shape="circle" />
+
+                    <p>{{ userInfo?.username }}</p>
+                </div>
+            </div>
+
+            <!-- Right: information -->
+            <div class="col-12 lg:col-8 p-2">
+                <div class="w-full flex flex-column align-items-start gap-3 p-5 shadow-2 border-round-2xl">
+                    <h2>Thông tin tài khoản</h2>
+
+                    <div class="w-full h-fit flex flex-column align-items-start gap-3">
+                        <p class="m-0">Họ và tên: <span>{{ userInfo?.fullName }}</span></p>
+                        <p class="m-0">Tên đăng nhập: <span>{{ userInfo?.username }}</span></p>
+                        <p class="m-0">Email: <span>{{ userInfo?.email }}</span></p>
+                        <p class="m-0">Ngày sinh: <span>{{ userInfo?.dateOfBirth }}</span></p>
+                        <p class="m-0">Số điện thoại: <span>{{ userInfo?.phone }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

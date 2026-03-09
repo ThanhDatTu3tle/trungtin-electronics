@@ -1,0 +1,259 @@
+<div class="wrapper" style="margin-top: 6rem;">
+    <!-- Filter Card -->
+    <p-panel header="Bộ lọc sản phẩm" [toggleable]="true" class="mb-3 w-full">
+        <div class="grid formgrid p-fluid">
+            <!-- Row 1 -->
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label for="filterCode" class="font-bold">Mã sản phẩm</label>
+                <input pInputText id="filterCode" [(ngModel)]="filterCode" placeholder="Nhập mã..." />
+            </div>
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label for="filterBrand" class="font-bold">Thương hiệu</label>
+                <input pInputText id="filterBrand" [(ngModel)]="filterBrand" placeholder="Nhập thương hiệu..." />
+            </div>
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label for="filterCategory" class="font-bold">Danh mục</label>
+                <p-select id="filterCategory" [options]="categories" [(ngModel)]="filterCategoryId"
+                    optionLabel="categoryName" optionValue="categoryId" [filter]="true" filterBy="categoryName"
+                    [showClear]="true" placeholder="Chọn danh mục" class="w-full" styleClass="w-full" />
+            </div>
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label class="font-bold">Trạng thái đặc biệt</label>
+                <div class="flex gap-4 mt-2">
+                    <div class="flex align-items-center">
+                        <p-checkbox [(ngModel)]="filterIsNew" [binary]="true" inputId="isNew"></p-checkbox>
+                        <label for="isNew" class="ml-2">Mới</label>
+                    </div>
+                    <div class="flex align-items-center">
+                        <p-checkbox [(ngModel)]="filterIsFeatured" [binary]="true" inputId="isFeatured"></p-checkbox>
+                        <label for="isFeatured" class="ml-2">Nổi bật</label>
+                    </div>
+                    <div class="flex align-items-center gap-2">
+                        <p-checkbox [(ngModel)]="filterHasDiscount" [binary]="true" inputId="hasDiscount"></p-checkbox>
+                        <label for="hasDiscount">Khuyến mãi</label>
+                        <p-inputNumber *ngIf="filterHasDiscount" [(ngModel)]="filterMinDiscount" mode="decimal"
+                            [min]="0" [max]="100" suffix="%" placeholder="Min %" [inputStyle]="{'width':'5rem'}"
+                            class="ml-2"></p-inputNumber>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label for="minPrice" class="font-bold">Giá từ</label>
+                <p-inputNumber id="minPrice" [(ngModel)]="filterMinPrice" mode="currency" currency="VND" locale="vi-VN"
+                    placeholder="0"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-3 flex flex-column gap-2">
+                <label for="maxPrice" class="font-bold">Đến giá</label>
+                <p-inputNumber id="maxPrice" [(ngModel)]="filterMaxPrice" mode="currency" currency="VND" locale="vi-VN"
+                    placeholder="tối đa"></p-inputNumber>
+            </div>
+            <div class="field col-12 md:col-6 flex align-items-end">
+                <!-- Spacer or Actions -->
+            </div>
+        </div>
+    </p-panel>
+
+    <p-toolbar class="mb-3 w-full">
+        <ng-template #start>
+            <p-button label="Filter" icon="pi pi-filter" severity="warn" (onClick)="loadProducts()" class="mr-2" />
+            <p-button label="Clear" icon="pi pi-filter-slash" severity="secondary" [outlined]="true"
+                (onClick)="clearFilter()" [disabled]="!hasActiveFilter" />
+        </ng-template>
+
+        <ng-template #end>
+            <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
+            <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined class="mr-2"
+                (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+
+            <p-divider layout="vertical"></p-divider>
+
+            <p-button label="Tải về mẫu excel" icon="pi pi-download" severity="info" class="mr-2"
+                (onClick)="downloadTemplate()" />
+            <p-fileUpload mode="basic" accept=".xlsx, .xls" [maxFileSize]="1000000" label="Import" chooseLabel="Import"
+                auto customUpload class="mr-2 inline-block" [chooseButtonProps]="{ severity: 'secondary' }"
+                (uploadHandler)="onImportExcel($event)" />
+            <p-button label="Tải về dữ liệu (.xlsx)" icon="pi pi-upload" severity="secondary"
+                (onClick)="exportCSV($event)" />
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt [value]="products" [rows]="10" [columns]="cols" [paginator]="true"
+        [globalFilterFields]="['productName', 'code', 'categoryName', 'stock']" [(selection)]="selectedProducts"
+        [rowHover]="true" dataKey="productId" style="width: 100%;"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <ng-template #caption>
+            <div class="flex flex-row w-full align-items-start justify-content-start gap-5">
+                <p-iconfield>
+                    <p-inputicon class="pi pi-search" />
+                    <input #searchInput pInputText type="text" (input)="dt.filterGlobal(searchInput.value, 'contains')"
+                        placeholder="Tìm kiếm nhanh..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th style="min-width: 16rem">Mã sản phẩm</th>
+                <th pSortableColumn="productName" style="min-width:16rem">
+                    <div class="flex align-items-center gap-2">
+                        Tên sản phẩm
+                        <p-sortIcon field="productName" />
+                    </div>
+                </th>
+                <th>Hình ảnh</th>
+                <th pSortableColumn="price" style="min-width: 8rem">
+                    <div class="flex align-items-center gap-2">
+                        Giá
+                        <p-sortIcon field="price" />
+                    </div>
+                </th>
+                <th pSortableColumn="categoryName" style="min-width:10rem">
+                    <div class="flex align-items-center gap-2">
+                        Danh mục
+                        <p-sortIcon field="categoryName" />
+                    </div>
+                </th>
+                <th pSortableColumn="stock" style="min-width: 12rem">
+                    <div class="flex align-items-center gap-2">
+                        Trạng thái
+                        <p-sortIcon field="stock" />
+                    </div>
+                </th>
+                <th pSortableColumn="discountPrice" style="min-width: 12rem">
+                    <div class="flex align-items-center gap-2">
+                        Khuyến mãi
+                        <p-sortIcon field="discountPrice" />
+                    </div>
+                </th>
+                <th style="min-width: 12rem"></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-product>
+            <tr>
+                <td style="width: 3rem">
+                    <p-tableCheckbox [value]="product" />
+                </td>
+                <td style="min-width: 12rem">{{ product.code }}</td>
+                <td style="min-width: 16rem">{{ product.productName }}</td>
+                <td>
+                    <img [src]="product.imageUrl" [alt]="product.productName" style="width: 64px" class="rounded" />
+                </td>
+                <td>{{ product.price | currency: product.currency || 'VND' }}</td>
+                <td>{{ product.categoryName || product.category?.categoryName }}</td>
+                <td>
+                    <p-tag [value]="getStockStatus(product.stock)"
+                        [severity]="getSeverity(getStockStatus(product.stock))" />
+                </td>
+                <td>
+                    <p-tag [value]="getDiscountStatus(product.discountPrice)"
+                        [severity]="getSeverityDiscount(product.discountPrice)" />
+                </td>
+                <td>
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="editProduct(product)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                        (click)="deleteProduct(product)" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="9" class="text-center p-4">
+                    <div class="flex flex-column align-items-center gap-2">
+                        <i class="pi pi-box text-6xl text-500"></i>
+                        <span class="text-xl text-500 font-semibold">Không có sản phẩm</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="productDialog" [style]="{ width: '1200px' }" header="Chi tiết sản phẩm" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-row gap-4">
+            <!-- Left Column: Image & Upload -->
+            <div class="flex flex-column align-items-center gap-3 w-4">
+                <div class="border-2 border-dashed border-300 border-round p-3 flex align-items-center justify-content-center surface-ground w-full"
+                    style="aspect-ratio: 1/1; position: relative;">
+                    <img [src]="product.imageUrl || 'https://primefaces.org/cdn/primeng/images/demo/product/placeholder.svg'"
+                        [alt]="product.productName" class="w-full h-full" style="object-fit: contain;"
+                        *ngIf="product.imageUrl; else placeholder" />
+                    <ng-template #placeholder>
+                        <div class="flex flex-column align-items-center text-500">
+                            <i class="pi pi-image text-4xl mb-2"></i>
+                            <span class="text-sm">No Image</span>
+                        </div>
+                    </ng-template>
+                </div>
+                <!-- File Upload Component -->
+                <p-fileUpload mode="basic" chooseLabel="Chọn hình ảnh" chooseIcon="pi pi-upload" name="demo[]"
+                    url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000"
+                    (onSelect)="onSelect($event)" [auto]="true" styleClass="w-full" />
+            </div>
+
+            <!-- Right Column: Form Fields -->
+            <div class="flex flex-column gap-3 w-8">
+                <!-- Product Name -->
+                <div class="flex flex-column gap-2">
+                    <label for="name" class="font-bold">Tên sản phẩm</label>
+                    <input type="text" pInputText id="name" [(ngModel)]="product.productName" required autofocus fluid
+                        placeholder="Nhập tên sản phẩm..." />
+                    <small class="text-red-500" *ngIf="submitted && !product.productName">Tên sản phẩm là bắt
+                        buộc.</small>
+                </div>
+
+                <!-- Code & Brand -->
+                <div class="flex flex-row gap-3">
+                    <div class="flex-1 flex flex-column gap-2">
+                        <label for="code" class="font-bold">Mã sản phẩm</label>
+                        <input type="text" pInputText id="code" [(ngModel)]="product.code" required fluid
+                            placeholder="VD: SP001" />
+                    </div>
+                    <div class="flex-1 flex flex-column gap-2">
+                        <label for="brand" class="font-bold">Thương hiệu</label>
+                        <input type="text" pInputText id="brand" [(ngModel)]="product.brand" fluid
+                            placeholder="VD: Apple, Samsung..." />
+                    </div>
+                </div>
+
+                <!-- Price & Stock & Discount -->
+                <div class="flex flex-row gap-3">
+                    <div class="flex-1 flex flex-column gap-2">
+                        <label for="price" class="font-bold">Giá bán</label>
+                        <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency"
+                            [currency]="product.currency || 'VND'" locale="vi-VN" fluid />
+                    </div>
+                    <div class="flex-1 flex flex-column gap-2">
+                        <label for="stock" class="font-bold">Tồn kho</label>
+                        <p-inputnumber id="stock" [(ngModel)]="product.stock" fluid [showButtons]="true" [min]="0" />
+                    </div>
+                    <div class="flex-1 flex flex-column gap-2">
+                        <label for="discountPrice" class="font-bold">Phần trăm giảm giá</label>
+                        <p-inputnumber id="discountPrice" [(ngModel)]="product.discountPrice" fluid [showButtons]="true"
+                            [min]="0" [max]="100" suffix="%"
+                            [placeholder]="product.discountPrice == null ? 'Chưa áp dụng khuyến mãi' : ''" />
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="flex flex-column gap-2 h-full">
+                    <label for="description" class="font-bold">Mô tả chi tiết</label>
+                    <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="4" fluid
+                        class="h-full" style="resize: none;"></textarea>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Save" icon="pi pi-check" (click)="saveProduct()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }" />
