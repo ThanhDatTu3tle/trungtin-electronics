@@ -1,0 +1,150 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches:
+      - main   # Chỉ deploy khi push lên branch main
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Build & Deploy Backend (Docker)
+  # ─────────────────────────────────────────────
+  deploy-backend:
+    name: 🐳 Deploy Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔐 SSH vào server và deploy BE
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "📦 Pulling latest code..."
+            cd /var/www/trungtin-electronics
+            git pull origin main
+
+            echo "🐳 Rebuilding Docker containers..."
+            docker compose down
+            docker compose build --no-cache api
+            docker compose up -d
+
+            echo "⏳ Waiting for services to start..."
+            sleep 10
+
+            echo "✅ Checking container status..."
+            docker compose ps
+
+  # ─────────────────────────────────────────────
+  # JOB 2: Build & Deploy Frontend
+  # ─────────────────────────────────────────────
+  deploy-frontend:
+    name: ⚛️ Build & Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: deploy-backend   # Chạy sau khi BE deploy xong
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json  # ← Đổi thành đường dẫn folder FE
+
+      - name: 📦 Install dependencies
+        working-directory: ./frontend   # ← Đổi thành tên folder FE của bạn
+        run: npm ci
+
+      - name: ⚙️ Inject environment variables vào Angular
+        working-directory: ./frontend
+        run: |
+          cat > src/environments/environment.prod.ts << EOF
+          export const environment = {
+            production: true,
+            apiUrl: '${{ secrets.PROD_API_URL }}',
+            client_id_google_auth: '${{ secrets.PROD_GOOGLE_CLIENT_ID }}'
+          };
+          EOF
+
+      - name: 🏗️ Build Frontend (Angular)
+        working-directory: ./frontend
+        run: npm run build -- --configuration production
+
+      - name: 📤 Upload build lên server qua SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "frontend/dist/trung-tin-electronics/browser/*"
+          target: "/var/www/trungtin-electronics/frontend"   # Đường dẫn web root trên server
+
+      - name: 🔄 Reload Nginx
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            sudo nginx -t && sudo systemctl reload nginx
+            echo "✅ Nginx reloaded successfully!"
+
+  # ─────────────────────────────────────────────
+  # JOB 3: Chạy SQL Migration / Stored Procedures
+  # ─────────────────────────────────────────────
+  deploy-database:
+    name: 🗄️ Run DB Migrations
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🗄️ Chạy SQL scripts trên server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/trungtin-electronics
+
+            # Kiểm tra có file SQL mới không
+            if ls database/migrations/*.sql 1> /dev/null 2>&1; then
+              echo "📜 Found SQL migration files, running..."
+              for file in database/migrations/*.sql; do
+                echo "▶️ Running: $file"
+                docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd \
+                  -S localhost \
+                  -U sa \
+                  -P "${{ secrets.DB_PASSWORD }}" \
+                  -C \
+                  -i "/migrations/$(basename $file)"
+                echo "✅ Done: $file"
+              done
+            else
+              echo "ℹ️ No SQL migration files found, skipping..."
+            fi
+
+            # Chạy stored procedures (nếu có thay đổi)
+            if ls database/stored-procedures/*.sql 1> /dev/null 2>&1; then
+              echo "⚙️ Updating stored procedures..."
+              for file in database/stored-procedures/*.sql; do
+                echo "▶️ Running SP: $file"
+                docker exec sqlserver /opt/mssql-tools18/bin/sqlcmd \
+                  -S localhost \
+                  -U sa \
+                  -P "${{ secrets.DB_PASSWORD }}" \
+                  -C \
+                  -i "/sp/$(basename $file)"
+              done
+              echo "✅ Stored procedures updated!"
+            fi
