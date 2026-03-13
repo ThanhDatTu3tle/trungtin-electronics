@@ -13,7 +13,7 @@ services:
       - sql_data:/var/opt/mssql
 
   api:
-    build: .
+    build: ./backend/TrungTinElectronicsAPI
     container_name: trungtin-api
     depends_on:
       - sqlserver
