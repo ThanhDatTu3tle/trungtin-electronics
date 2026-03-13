@@ -28,6 +28,10 @@ jobs:
             cd /var/www/trungtin-electronics
             git pull origin main
 
+            echo "📋 Copying docker-compose.yml ra root..."
+            cp backend/TrungTinElectronicsAPI/docker-compose.yml .
+            sed -i '/^version:/d' docker-compose.yml
+
             echo "🐳 Rebuilding Docker containers..."
             docker compose down
             docker compose build --no-cache api
