@@ -33,9 +33,8 @@ jobs:
             sed -i '/^version:/d' docker-compose.yml
 
             echo "🐳 Rebuilding Docker containers..."
-            docker compose down
             docker compose build --no-cache api
-            docker compose up -d
+            docker compose up -d --force-recreate
 
             echo "⏳ Waiting for services to start..."
             sleep 10
