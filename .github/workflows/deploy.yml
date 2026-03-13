@@ -64,7 +64,7 @@ jobs:
 
       - name: 📦 Install dependencies
         working-directory: ./frontend   # ← Đổi thành tên folder FE của bạn
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: ⚙️ Inject environment variables vào Angular
         working-directory: ./frontend
