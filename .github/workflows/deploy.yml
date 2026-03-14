@@ -87,7 +87,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "frontend/dist/trung-tin-electronics/browser/*"
-          target: "/var/www/trungtin-electronics/frontend"   # Đường dẫn web root trên server
+          target: "/var/www/html/browser"
+          strip_components: 5
 
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v1.0.0
