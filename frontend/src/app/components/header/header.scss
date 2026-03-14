@@ -228,17 +228,60 @@
 }
 
 /* Login */
-.google-btn {
-  background-color: #ffffff !important;
-  color: #444 !important;
-  border: 1px solid #ddd !important;
+.google-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background-color: #ffffff;
+  color: #444444;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    background-color: #f1f1f1 !important;
+    background-color: #f7f8f8;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }
 
-  .pi-google {
-    color: #db4437;
+  &:active {
+    background-color: #eef0f1;
+  }
+}
+
+.facebook-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background-color: #1877F2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  .pi-facebook {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    background-color: #166FE5;
+  }
+
+  &:active {
+    background-color: #1565D8;
   }
 }
 

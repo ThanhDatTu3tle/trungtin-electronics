@@ -32,6 +32,7 @@ import { Tooltip } from "primeng/tooltip";
 import { BadgeModule } from 'primeng/badge';
 
 declare const google: any;
+declare const FB: any;
 
 @Component({
   selector: 'app-header',
@@ -59,6 +60,7 @@ declare const google: any;
 })
 export class Header {
   private googleInitialized = false;
+  private facebookInitialized = false;
   private initializeGoogle() {
     if (!(window as any)['google']) return;
 
@@ -164,6 +166,10 @@ export class Header {
     if (!this.googleInitialized) {
       this.googleInitialized = true;
       this.initializeGoogle();
+    }
+    if (!this.facebookInitialized) {
+      this.facebookInitialized = true;
+      this.initializeFacebook();
     }
     
     // Initialize cart count observable
@@ -365,6 +371,78 @@ export class Header {
     if (!btn) return;
 
     google.accounts.id.renderButton(btn, { theme: 'outline', size: 'large' });
+  }
+
+  // Facebook Login
+  private initializeFacebook() {
+    if (!(window as any)['FB']) {
+      // Retry after SDK loads
+      setTimeout(() => this.initializeFacebook(), 500);
+      return;
+    }
+
+    FB.init({
+      appId: environment.app_id_facebook_auth,
+      cookie: true,
+      xfbml: true,
+      version: 'v19.0',
+    });
+  }
+
+  onFacebookLogin() {
+    if (!(window as any)['FB']) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Facebook SDK chưa sẵn sàng, vui lòng thử lại.',
+      });
+      return;
+    }
+
+    FB.login(
+      (response: any) => {
+        if (response.authResponse) {
+          this.handleFacebookToken(response.authResponse.accessToken);
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Đã hủy',
+            detail: 'Đăng nhập Facebook đã bị hủy.',
+          });
+        }
+      },
+      { scope: 'public_profile,email' }
+    );
+  }
+
+  private handleFacebookToken(token: string) {
+    this.http.post(`${this.apiUrl}/facebook-login`, { token }).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('token', res.token);
+        this.isSign = true;
+        this.visibleLogIn = false;
+        this.visibleRegister = false;
+        this.router.navigate(['/']);
+
+        // Lấy thông tin người dùng
+        this.userInfo = this.getUser().subscribe({
+          next: (res) => {
+            this.userInfo = res;
+          },
+          error: (err) => {
+            console.error('Lỗi lấy user:', err);
+          },
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: 'Facebook login thất bại',
+        });
+      },
+    });
   }
 
   // routeToInfo
