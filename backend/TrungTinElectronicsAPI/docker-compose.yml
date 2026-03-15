@@ -1,4 +1,4 @@
-version: "3.9"
+﻿version: "3.9"
 
 services:
   sqlserver:
@@ -21,8 +21,13 @@ services:
       - "5000:8080"
     environment:
       ASPNETCORE_URLS: "http://+:8080"
+      ASPNETCORE_ENVIRONMENT: "Production"
       Jwt__Key: "super_super_secret_key_123456789"
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrungTinElectronicsDB;User Id=sa;Password=Thanhdat03!Pass123;TrustServerCertificate=True;"
+      CloudinarySettings__CloudName: "devw2kryy"
+      CloudinarySettings__ApiKey: "317333323879812"
+      CloudinarySettings__ApiSecret: "EaWybRFG6-47rb7tdMaFM3G2hoI"
+      Google__ClientId: "107387810446-tbg5j580tkdqhhnq40pj462981njdr0a.apps.googleusercontent.com"
 
 volumes:
   sql_data:

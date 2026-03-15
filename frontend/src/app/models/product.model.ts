@@ -16,6 +16,7 @@ export interface Product {
   stock: number;
   isNew: boolean;
   isFeatured: boolean;
+  spotlight: boolean;
   category?: Category | null;
   productTags: ProductTag[];
   categoryName?: string;

@@ -51,35 +51,90 @@
         </div>
       </div>
 
-      <!-- Right: spotlight -->
+      <!-- Right: spotlight (Desktop) -->
+      @if (isDesktop && spotlightProducts.length > 0) {
       <div class="col-12 lg:col-4 p-3">
-        <div class="spotlight p-3 shadow-2">
-          <div class="grid">
-            <div class="col-12 md:col-6">
-              <app-product-galleria [dataImage]="images" [position]="'bottom'" [widthImageSrc]="100"
-                [widthImageThumb]="75">
-              </app-product-galleria>
+        <div class="spotlight spotlight-desktop p-3 shadow-2">
+          @if (activeSpotlightProduct) {
+          <div class="spotlight-inner">
+            <div class="spotlight-image-wrap mb-3">
+              <img [src]="activeSpotlightProduct.imageUrl" [alt]="activeSpotlightProduct.productName"
+                class="spotlight-image" />
+              <span class="spotlight-badge">Spotlight ⭐</span>
             </div>
 
-            <div class="col-12 md:col-6">
-              <p class="spotlight-name font-medium text-xl mb-1">Máy cắt sắt Dekton 355mm</p>
-              <p class="spotlight-model text-sm mb-2">Model: DT355</p>
+            <div class="spotlight-info">
+              <p class="spotlight-name font-medium text-xl mb-1">{{ activeSpotlightProduct.productName }}</p>
+              <p class="spotlight-model text-sm mb-2">{{ activeSpotlightProduct.code }}</p>
               <p class="spotlight-desc mb-3 line-height-3">
-                Bàn cắt thép 355mm, motor đồng, khung thép chắc, thước chặn nhanh.
+                {{ activeSpotlightProduct.description }}
               </p>
 
               <div>
-                <div class="spotlight-price text-primary font-bold text-lg mb-2">3,190,000 đ</div>
+                <div class="spotlight-price text-primary font-bold text-lg mb-3">
+                  {{ formatPrice(activeSpotlightProduct.price) }} đ
+                </div>
                 <div class="spotlight-actions flex gap-2">
-                  <button pButton label="Thêm vào giỏ" class="p-button-text"></button>
-                  <button pButton label="Xem chi tiết" class="p-button-secondary"></button>
+                  <button pButton label="Thêm vào giỏ" icon="pi pi-shopping-cart"
+                    class="p-button-outlined p-button-sm" (click)="addSpotlightToCart(activeSpotlightProduct)">
+                  </button>
+                  <button pButton label="Xem chi tiết" icon="pi pi-eye"
+                    class="p-button-sm" (click)="viewSpotlightDetail(activeSpotlightProduct)">
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Dot indicators -->
+          <div class="spotlight-dots flex justify-content-center gap-2 mt-3">
+            @for (p of spotlightProducts; track p.productId; let i = $index) {
+            <button class="spotlight-dot" [class.active]="i === activeSpotlightIndex"
+              (click)="goToSpotlight(i)" [attr.aria-label]="'Xem sản phẩm ' + p.productName">
+            </button>
+            }
+          </div>
+          }
         </div>
       </div>
+      }
     </div>
+
+    <!-- Spotlight Carousel (Tablet / Mobile) -->
+    @if (!isDesktop && spotlightProducts.length > 0) {
+    <div class="spotlight-mobile-section p-2 mt-3">
+      <div class="section-header flex justify-content-between align-items-center mb-3 p-2">
+        <div class="section-title font-bold text-2xl flex align-items-center gap-2">
+          Spotlight ⭐
+        </div>
+      </div>
+      <p-carousel [value]="spotlightProducts" [numVisible]="numVisibleSpotlight" [numScroll]="1"
+        [circular]="true" [autoplayInterval]="3000" [responsiveOptions]="spotlightResponsiveOptions"
+        [showNavigators]="true">
+        <ng-template let-product pTemplate="item">
+          <div class="spotlight-card-mobile mx-2 shadow-2 cursor-pointer"
+            (click)="viewSpotlightDetail(product)">
+            <div class="spotlight-card-image-wrap">
+              <img [src]="product.imageUrl" [alt]="product.productName" class="spotlight-card-image" />
+              <span class="spotlight-badge-sm">⭐</span>
+            </div>
+            <div class="spotlight-card-body p-2">
+              <p class="spotlight-card-name font-medium mb-1">{{ product.productName }}</p>
+              <p class="spotlight-card-code text-sm text-500 mb-1">{{ product.code }}</p>
+              <p class="spotlight-card-price text-primary font-bold">
+                {{ formatPrice(product.price) }} đ
+              </p>
+              <div class="spotlight-card-actions flex gap-1 mt-2">
+                <button pButton icon="pi pi-shopping-cart" class="p-button-outlined p-button-sm flex-1"
+                  label="Giỏ hàng" (click)="addSpotlightToCart(product); $event.stopPropagation()">
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+    }
 
     <div class="my-4"></div>
 
