@@ -33,6 +33,7 @@ jobs:
             sed -i '/^version:/d' docker-compose.yml
 
             echo "🐳 Rebuilding Docker containers..."
+            docker rm -f trungtin-api 2>/dev/null || true
             docker compose build --no-cache api
             docker compose up -d --force-recreate
 
