@@ -105,8 +105,15 @@
 }
 
 .spotlight-desktop {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   .spotlight-inner {
     animation: spotlightFadeIn 0.5s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   .spotlight-image-wrap {
@@ -116,6 +123,10 @@
     border-radius: 0.75rem;
     padding: 1rem;
     overflow: hidden;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .spotlight-image {
@@ -132,7 +143,7 @@
   .spotlight-badge {
     position: absolute;
     top: 0.5rem;
-    left: 0.5rem;
+    right: 0.5rem;
     background: linear-gradient(135deg, #ff9800, #ff5722);
     color: #fff;
     font-size: 0.7rem;
@@ -142,6 +153,24 @@
     letter-spacing: 0.03em;
   }
 
+  .spotlight-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .spotlight-name {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 3.5rem; /* ~2 lines */
+    }
+
+    > div {
+      margin-top: auto;
+    }
+  }
+
   .spotlight-desc {
     color: var(--text-color-secondary);
     font-size: 0.85rem;
@@ -149,6 +178,7 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 4.5rem; /* ~3 lines for line-height-3 */
   }
 
   .spotlight-actions {
@@ -204,6 +234,9 @@
     overflow: hidden;
     background: var(--surface-card, #fff);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     &:hover {
       transform: translateY(-4px);
@@ -220,7 +253,7 @@
 
   .spotlight-card-image {
     width: 100%;
-    height: 140px;
+    height: 250px; /* Tăng height ảnh */
     object-fit: contain;
   }
 
@@ -238,27 +271,37 @@
     justify-content: center;
   }
 
+  .spotlight-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
   .spotlight-card-name {
     color: var(--color-text-dark);
-    font-size: 0.85rem;
+    font-size: 1rem; /* Tăng size title */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.3;
+    line-height: 1.4;
+    min-height: 2.8em;
   }
 
   .spotlight-card-code {
-    font-size: 0.75rem;
+    font-size: 0.85rem; /* Tăng size code */
   }
 
   .spotlight-card-price {
-    font-size: 0.95rem;
+    /* Để các utility class của prime (text-xl v.v) quyết định */
   }
 
   .spotlight-card-actions {
+    margin-top: auto;
+
     button {
-      font-size: 0.75rem;
+      font-size: 0.85rem; /* Tăng size nút */
+      padding: 0.75rem;
     }
   }
 
@@ -288,15 +331,27 @@
 @media (max-width: 768px) {
   .spotlight-mobile-section {
     .spotlight-card-image {
-      height: 110px;
+      height: 200px; /* Ảnh trên điện thoại cao xíu */
     }
+  }
+}
 
-    .spotlight-card-name {
-      font-size: 0.78rem;
-    }
+/* Tag khuyến mãi */
+.product-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  z-index: 2;
 
-    .spotlight-card-price {
-      font-size: 0.85rem;
-    }
+  &.discount-tag {
+    background: linear-gradient(135deg, #ff6b6b 0%, #e53935 100%);
+    animation: pulse-discount 2s infinite;
   }
 }

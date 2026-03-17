@@ -75,7 +75,6 @@ export class HomePage implements OnDestroy {
   activeSpotlightIndex: number = 0;
   private spotlightInterval: any = null;
 
-  // Responsive options cho p-carousel spotlight (tablet/mobile)
   spotlightResponsiveOptions = [
     {
       breakpoint: '1024px',
@@ -84,7 +83,7 @@ export class HomePage implements OnDestroy {
     },
     {
       breakpoint: '768px',
-      numVisible: 2,
+      numVisible: 1,
       numScroll: 1,
     },
   ];
@@ -92,7 +91,7 @@ export class HomePage implements OnDestroy {
   get numVisibleSpotlight(): number {
     if (this.screenWidth >= 1024) return 4;
     if (this.screenWidth >= 768) return 3;
-    return 2;
+    return 1;
   }
 
   get isDesktop(): boolean {
@@ -143,7 +142,7 @@ export class HomePage implements OnDestroy {
           const discountProducts = data.filter((item: any) => item.discountPrice && item.discountPrice > 0);
 
           // Lọc sản phẩm spotlight
-          const spotlightItems = data.filter((item: any) => item.spotlight);
+          const spotlightItems = data.filter((item: any) => item.isSpotlight);
 
           let limit = 4;
           if (this.screenWidth >= 768 && this.screenWidth < 1024) limit = 3;
@@ -191,6 +190,10 @@ export class HomePage implements OnDestroy {
 
   viewSpotlightDetail(product: any) {
     this.router.navigate(['/detail-product', product.code, product.productName]);
+  }
+
+  goToPromo() {
+    this.router.navigate(['/promo-product']);
   }
 
   formatPrice(price: number): string {

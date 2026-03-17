@@ -28,7 +28,8 @@ export class ProductService {
     minPrice?: number,
     maxPrice?: number,
     isNew?: boolean,
-    isFeatured?: boolean
+    isFeatured?: boolean,
+    isSpotlight?: boolean
   ): Observable<Product[]> {
     let params = new HttpParams();
     if (code) params = params.set('code', code);
@@ -38,6 +39,7 @@ export class ProductService {
     if (maxPrice != null) params = params.set('maxPrice', maxPrice);
     if (isNew) params = params.set('isNew', '1');
     if (isFeatured) params = params.set('isFeatured', '1');
+    if (isSpotlight) params = params.set('isSpotlight', '1');
 
     return this.http
       .post<ApiResponse<Product[]>>(this.apiUrl + '/GetAllProducts', {}, { params })

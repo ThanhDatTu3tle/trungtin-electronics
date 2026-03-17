@@ -100,6 +100,7 @@ export class Products {
   filterMaxPrice: number | null = null;
   filterIsNew: boolean = false;
   filterIsFeatured: boolean = false;
+  filterIsSpotlight: boolean = false;
   filterHasDiscount: boolean = false; // Filter sản phẩm có khuyến mãi
   filterMinDiscount: number | null = null;
 
@@ -146,7 +147,8 @@ export class Products {
       this.filterMinPrice || undefined,
       this.filterMaxPrice || undefined,
       this.filterIsNew,
-      this.filterIsFeatured
+      this.filterIsFeatured,
+      this.filterIsSpotlight
     ).subscribe({
       next: (data) => {
         // Client-side filter for discount products
@@ -184,7 +186,7 @@ export class Products {
       this.filterMaxPrice !== null ||
       this.filterIsNew ||
       this.filterIsFeatured ||
-      this.filterIsFeatured ||
+      this.filterIsSpotlight ||
       this.filterHasDiscount ||
       this.filterMinDiscount !== null
     );
@@ -198,7 +200,7 @@ export class Products {
     this.filterMaxPrice = null;
     this.filterIsNew = false;
     this.filterIsFeatured = false;
-    this.filterIsFeatured = false;
+    this.filterIsSpotlight = false;
     this.filterHasDiscount = false;
     this.filterMinDiscount = null;
     this.loadProducts();

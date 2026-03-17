@@ -33,15 +33,18 @@
   <div class="product-content text-center p-3">
     <h3 class="product-title">{{ name }}</h3>
     <p class="product-code">{{ code }}</p>
-    @if (discountedPrice) {
     <div class="product-price-wrapper">
+      @if (discountedPrice) {
       <p class="product-price-original">{{ price | number }} đ</p>
       <p class="product-price discounted">{{ discountedPrice | number }} đ</p>
+      } @else {
+      <!-- Empty placeholder for original price to maintain height -->
+      <p class="product-price-original" style="visibility: hidden;">0 đ</p>
+      <p class="product-price">{{ price | number }} đ</p>
+      }
     </div>
-    } @else {
-    <p class="product-price">{{ price | number }} đ</p>
-    }
-    <p-button label="Đọc thêm" class="mt-4" styleClass="background-color: #0e5b3f;"
+    <br />
+    <p-button label="Đọc thêm" class="mt-5" styleClass="background-color: #0e5b3f;"
       (click)="routeToDetail(name, code)"></p-button>
   </div>
 </div>

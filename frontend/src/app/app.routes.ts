@@ -35,6 +35,10 @@ export const routes: Routes = [
       {
         path: 'user-profile',
         loadChildren: () => import('./pages/user-profile/user-profile.routes').then(m => m.default)
+      },
+      {
+        path: 'promo-product',
+        loadChildren: () => import('./pages/promo-product-page/promo-product-page.routes').then(m => m.default)
       }
     ]
   },

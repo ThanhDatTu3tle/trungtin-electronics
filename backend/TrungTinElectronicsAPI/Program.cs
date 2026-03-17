@@ -6,6 +6,7 @@ using System.Text;
 using TrungTinElectronicsAPI.Data;
 using TrungTinElectronicsAPI.Models;
 using TrungTinElectronicsAPI.Repositories.Category;
+using TrungTinElectronicsAPI.Repositories.Event;
 using TrungTinElectronicsAPI.Repositories.Product;
 using TrungTinElectronicsAPI.Services;
 
@@ -114,6 +115,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Inject repository Category
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+// Inject repository Event
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 
 // Inject Cloudinary
 builder.Services.Configure<CloudinarySettings>(

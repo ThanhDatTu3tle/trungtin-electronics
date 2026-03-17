@@ -28,6 +28,10 @@
                         <p-checkbox [(ngModel)]="filterIsFeatured" [binary]="true" inputId="isFeatured"></p-checkbox>
                         <label for="isFeatured" class="ml-2">Nổi bật</label>
                     </div>
+                    <div class="flex align-items-center">
+                        <p-checkbox [(ngModel)]="filterIsSpotlight" [binary]="true" inputId="isSpotlight"></p-checkbox>
+                        <label for="isSpotlight" class="ml-2">Siêu nổi bật</label>
+                    </div>
                     <div class="flex align-items-center gap-2">
                         <p-checkbox [(ngModel)]="filterHasDiscount" [binary]="true" inputId="hasDiscount"></p-checkbox>
                         <label for="hasDiscount">Khuyến mãi</label>
@@ -207,7 +211,7 @@
                         buộc.</small>
                 </div>
 
-                <!-- Code & Brand -->
+                <!-- Code & Brand & Status -->
                 <div class="flex flex-row gap-3">
                     <div class="flex-1 flex flex-column gap-2">
                         <label for="code" class="font-bold">Mã sản phẩm</label>
@@ -217,7 +221,28 @@
                     <div class="flex-1 flex flex-column gap-2">
                         <label for="brand" class="font-bold">Thương hiệu</label>
                         <input type="text" pInputText id="brand" [(ngModel)]="product.brand" fluid
-                            placeholder="VD: Apple, Samsung..." />
+                            placeholder="VD: Dekton, Milwaukee..." />
+                    </div>
+                    <!-- Product Status Toggles -->
+                    <div class="flex-3 flex flex-column gap-2">
+                        <label class="font-bold">Trạng thái sản phẩm</label>
+                        <div class="flex flex-wrap gap-4 mt-2">
+                            <div class="flex align-items-center">
+                                <p-checkbox [(ngModel)]="product.isNew" [binary]="true"
+                                    inputId="productIsNew"></p-checkbox>
+                                <label for="productIsNew" class="ml-2">Mới</label>
+                            </div>
+                            <div class="flex align-items-center">
+                                <p-checkbox [(ngModel)]="product.isFeatured" [binary]="true"
+                                    inputId="productIsFeatured"></p-checkbox>
+                                <label for="productIsFeatured" class="ml-2">Nổi bật</label>
+                            </div>
+                            <div class="flex align-items-center">
+                                <p-checkbox [(ngModel)]="product.isSpotlight" [binary]="true"
+                                    inputId="productIsSpotlight"></p-checkbox>
+                                <label for="productIsSpotlight" class="ml-2">Siêu nổi bật</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -246,6 +271,8 @@
                     <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="4" fluid
                         class="h-full" style="resize: none;"></textarea>
                 </div>
+
+
             </div>
         </div>
     </ng-template>

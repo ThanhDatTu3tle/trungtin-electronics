@@ -1,0 +1,70 @@
+<div class="promo-page-container">
+  <!-- Banner Header -->
+  <div class="promo-header py-6 px-4 md:px-8 mb-4">
+    <div class="container mx-auto" style="max-width: 1200px;">
+      <p-breadcrumb [model]="items" [home]="home" class="mb-4 custom-breadcrumb"></p-breadcrumb>
+
+      <div class="flex flex-column md:flex-row align-items-center justify-content-between gap-4">
+        <div class="promo-info text-white mt-3">
+          <span class="text-orange-300 font-bold uppercase tracking-widest mb-2 block">
+            <i class="pi pi-bolt mr-2"></i>Flash Sale & Deals
+          </span>
+          <h1 class="text-4xl md:text-6xl font-bold m-0 mb-3">Siêu Ưu Đãi Cuối Tuần</h1>
+          <p class="text-lg text-green-100 m-0 opacity-90 max-width: 600px; line-height-3">
+            Cơ hội sở hữu các thiết bị điện tử, máy móc cơ khí chính hãng với mức giá hấp dẫn nhất. Giảm thêm đến 15%
+            khi mua kèm phụ kiện.
+          </p>
+        </div>
+        <div class="promo-visual hidden md:block">
+          <i class="pi pi-gift text-yellow-400"
+            style="font-size: 10rem; filter: drop-shadow(0 0 30px rgba(255, 193, 7, 0.5));"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto pb-8 px-2 md:px-4" style="max-width: 1200px;">
+    <!-- Filter Bar (Optional for now) -->
+    <div class="flex justify-content-between align-items-center mb-5">
+      <h2 class="text-2xl font-bold m-0 flex align-items-center">
+        <span class="w-1rem h-2rem bg-primary mr-2 border-round"></span>
+        Sản phẩm đang giảm giá ({{ promoProducts.length }})
+      </h2>
+      <div class="hidden md:flex gap-2">
+        <button pButton label="Phổ biến nhất" class="p-button-text p-button-sm"></button>
+        <button pButton label="Giá thấp đến cao" class="p-button-text p-button-sm"></button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid">
+      @if (isLoading) {
+      @for (i of [1,2,3,4,5,6,7,8]; track i) {
+      <div class="col-6 md:col-4 lg:col-3 p-2">
+        <app-product-card [isLoadingProduct]="false"></app-product-card>
+      </div>
+      }
+      } @else {
+      @for (p of promoProducts; track p.productId) {
+      <div class="col-6 md:col-4 lg:col-3 p-2">
+        <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
+          [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)"
+          [isLoadingProduct]="true" (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+        </app-product-card>
+      </div>
+      }
+
+      @if (promoProducts.length === 0) {
+      <div class="col-12 text-center py-8">
+        <div class="mb-4">
+          <i class="pi pi-search text-6xl text-400"></i>
+        </div>
+        <h3 class="text-xl font-medium text-600">Hiện không có sản phẩm nào đang trong chương trình khuyến mãi.</h3>
+        <p class="text-500 mb-4">Vui lòng quay lại sau để cập nhật các ưu đãi mới nhất từ Trung Tín.</p>
+        <button pButton label="Quay lại trang chủ" icon="pi pi-home" (click)="goBack()"></button>
+      </div>
+      }
+      }
+    </div>
+  </div>
+</div>
