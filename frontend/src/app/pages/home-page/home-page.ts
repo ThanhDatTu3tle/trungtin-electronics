@@ -12,24 +12,25 @@ import { CategoryService } from '../../services/category.service';
 import { ProductService } from '../../services/product.service';
 import { WishlistService } from '../../services/wishlist.service';
 import { CartService } from '../../services/cart.service';
+import { EventService } from '../../services/event.service';
 
 // Components
 import { Carousel } from './carousel/carousel';
 import { ProductCard } from '../../components/product-card/product-card';
-import { ProductGalleria } from '../../components/product-galleria/product-galleria';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   standalone: true,
-  imports: [CommonModule, Tooltip, Carousel, ProductCard, ProductGalleria, CarouselModule, ButtonModule],
+  imports: [CommonModule, Tooltip, Carousel, ProductCard, CarouselModule, ButtonModule],
 })
 export class HomePage implements OnDestroy {
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
     private wishlistService: WishlistService,
+    private eventService: EventService,
     private cartService: CartService,
     private cdr: ChangeDetectorRef,
     private router: Router
@@ -38,6 +39,7 @@ export class HomePage implements OnDestroy {
   ngOnInit() {
     this.loadDataCategory();
     this.loadDataProduct();
+    this.loadActiveEvents();
   }
 
   ngOnDestroy() {
@@ -168,6 +170,22 @@ export class HomePage implements OnDestroy {
     });
   }
 
+  // Thêm biến
+  activeEvents: any[] = [];
+  get primaryEvent(): any {
+    return this.activeEvents[0] || null;
+  }
+  loadActiveEvents() {
+    this.eventService.getActiveEvents().subscribe({
+      next: (response: any) => {
+        const data = Array.isArray(response) ? response : response.data;
+        this.activeEvents = data || [];
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error loading events', err)
+    });
+  }
+
   toggleWishlist(product: any) {
     if (this.wishlistService.isInWishlist(product.productId)) {
       this.wishlistService.removeFromWishlist(product.productId);
@@ -193,7 +211,13 @@ export class HomePage implements OnDestroy {
   }
 
   goToPromo() {
-    this.router.navigate(['/promo-product']);
+    if (this.primaryEvent) {
+      this.router.navigate(['/promo-product'], { 
+        queryParams: { eventId: this.primaryEvent.eventId } 
+      });
+    } else {
+      this.router.navigate(['/promo-product']);
+    }
   }
 
   formatPrice(price: number): string {

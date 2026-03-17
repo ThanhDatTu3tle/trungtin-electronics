@@ -133,6 +133,12 @@
                         <p-sortIcon field="discountPrice" />
                     </div>
                 </th>
+                <th pSortableColumn="eventName" style="min-width: 12rem;">
+                    <div class="flex align-items-center gap-2">
+                        Sự kiện giảm giá
+                        <p-sortIcon field="eventName" />
+                    </div>
+                </th>
                 <th style="min-width: 12rem"></th>
             </tr>
         </ng-template>
@@ -156,6 +162,14 @@
                     <p-tag [value]="getDiscountStatus(product.discountPrice)"
                         [severity]="getSeverityDiscount(product.discountPrice)" />
                 </td>
+                <td style="min-width: 12rem;">
+                    <p-tag *ngIf="product.eventId" [value]="product.eventName" icon="pi pi-bolt" [style]="{
+                            'background': product.eventColorTheme || '#6366f1',
+                            'color': '#ffffff',
+                            'border': 'none'
+                        }" />
+                    <span *ngIf="!product.eventId" class="text-400 text-sm">—</span>
+                </td>
                 <td>
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                         (click)="editProduct(product)" />
@@ -166,7 +180,7 @@
         </ng-template>
         <ng-template #emptymessage>
             <tr>
-                <td colspan="9" class="text-center p-4">
+                <td colspan="10" class="text-center p-4">
                     <div class="flex flex-column align-items-center gap-2">
                         <i class="pi pi-box text-6xl text-500"></i>
                         <span class="text-xl text-500 font-semibold">Không có sản phẩm</span>

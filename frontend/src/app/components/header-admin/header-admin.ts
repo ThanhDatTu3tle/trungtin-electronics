@@ -57,6 +57,11 @@ export class HeaderAdmin {
         routerLink: '/admin/products',
       },
       {
+        label: 'Sự kiện giảm giá',
+        icon: 'pi pi-gift',
+        routerLink: '/admin/events',
+      },
+      {
         label: 'Đơn hàng',
         icon: 'pi pi-file-edit',
         routerLink: '/admin/orders',

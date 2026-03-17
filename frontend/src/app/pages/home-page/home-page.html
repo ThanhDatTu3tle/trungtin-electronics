@@ -42,8 +42,8 @@
           @for (p of productListOutstanding; track p.productId) {
           <div class="col-6 md:col-4 lg:col-4 p-2">
             <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
-              [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)" [isLoadingProduct]="true"
-              (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+              [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)"
+              [isLoadingProduct]="true" (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
             </app-product-card>
           </div>
           }
@@ -51,11 +51,11 @@
         </div>
 
         <!-- Promo Banner -->
-        <div class="col-12 mt-4 px-2">
+        <div class="col-12 mt-4 px-2" *ngIf="primaryEvent">
           <div
             class="promo-banner border-round-xl p-4 md:p-5 flex align-items-center justify-content-between shadow-3 cursor-pointer relative overflow-hidden"
-            style="background: linear-gradient(135deg, #0e5b3f 0%, #17835c 100%); color: white; min-height: 200px;"
-            (click)="goToPromo()">
+            [style.background]="'linear-gradient(135deg, ' + (primaryEvent.colorTheme || '#0e5b3f') + ' 0%, ' + (primaryEvent.colorTheme || '#17835c') + '99 100%)'"
+            style="color: white; min-height: 200px;" (click)="goToPromo()">
 
             <!-- Deco circles -->
             <div class="absolute"
@@ -66,18 +66,20 @@
             </div>
 
             <div class="promo-content relative z-1">
-              <div class="text-orange-300 font-bold mb-2 uppercase text-sm md:text-base tracking-widest"
-                style="letter-spacing: 1px;">
-                <i class="pi pi-star-fill text-xs mr-1"></i> Siêu ưu đãi cuối tuần
+              <div class="text-orange-300 font-bold mb-2 uppercase text-sm md:text-base" style="letter-spacing: 1px;">
+                <i class="pi pi-star-fill text-xs mr-1"></i> {{ primaryEvent.name }}
               </div>
-              <h3 class="text-2xl md:text-4xl font-bold mb-2 mt-0">Giảm thêm 15%</h3>
+              <h3 class="text-2xl md:text-4xl font-bold mb-2 mt-0">
+                Giảm thêm {{ primaryEvent.discountPercent }}%
+              </h3>
               <p class="m-0 text-green-100 line-height-3 mb-4" style="max-width: 400px;">
-                Khi mua kèm các sản phẩm phụ kiện dụng cụ điện, mũi khoan, lưỡi cắt chính hãng.
+                {{ primaryEvent.description }}
               </p>
               <button pButton label="Xem tất cả ưu đãi" icon="pi pi-arrow-right" iconPos="right"
                 class="p-button-warning p-button-rounded border-none font-bold shadow-2"
                 style="background-color: #ff9800; color: #fff;"></button>
             </div>
+
             <div class="promo-image hidden md:flex align-items-center justify-content-center relative z-1 pr-4">
               <i class="pi pi-gift text-yellow-400"
                 style="font-size: 7rem; opacity: 0.9; filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.4)); transform: rotate(-10deg);"></i>
@@ -200,8 +202,8 @@
       @for (p of productListNew; track p.productId) {
       <div class="col-6 md:col-4 lg:col-3 p-2" pAnimateOnScroll>
         <app-product-card [name]="p.productName" [code]="p.code" [price]="p.price" [imageUrl]="p.imageUrl"
-          [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)" [isLoadingProduct]="true"
-          (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
+          [tags]="p.productTags" [discountPercent]="p.discountPrice" [isInWishlist]="isInWishlist(p.productId)"
+          [isLoadingProduct]="true" (addToWishlist)="toggleWishlist(p)" (addToCart)="addCart(p)">
         </app-product-card>
       </div>
       }

@@ -20,6 +20,9 @@ export interface Product {
   category?: Category | null;
   productTags: ProductTag[];
   categoryName?: string;
+  eventId?: number | null;
+  eventName?: string | null;
+  eventColorTheme?: string | null;
 }
 
 export interface Category {

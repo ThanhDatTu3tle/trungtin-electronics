@@ -1,6 +1,6 @@
 <div class="promo-page-container">
-  <!-- Banner Header -->
-  <div class="promo-header py-6 px-4 md:px-8 mb-4">
+  <!-- Banner Header — dynamic theo event -->
+  <div class="promo-header py-6 px-4 md:px-8 mb-4" [style.background]="bannerBackground">
     <div class="container mx-auto" style="max-width: 1200px;">
       <p-breadcrumb [model]="items" [home]="home" class="mb-4 custom-breadcrumb"></p-breadcrumb>
 
@@ -9,11 +9,21 @@
           <span class="text-orange-300 font-bold uppercase tracking-widest mb-2 block">
             <i class="pi pi-bolt mr-2"></i>Flash Sale & Deals
           </span>
-          <h1 class="text-4xl md:text-6xl font-bold m-0 mb-3">Siêu Ưu Đãi Cuối Tuần</h1>
-          <p class="text-lg text-green-100 m-0 opacity-90 max-width: 600px; line-height-3">
-            Cơ hội sở hữu các thiết bị điện tử, máy móc cơ khí chính hãng với mức giá hấp dẫn nhất. Giảm thêm đến 15%
-            khi mua kèm phụ kiện.
+          <h1 class="text-4xl md:text-6xl font-bold m-0 mb-3">
+            {{ selectedEvent?.name || 'Siêu Ưu Đãi' }}
+          </h1>
+          <p class="text-lg text-green-100 m-0 opacity-90 line-height-3" style="max-width: 600px;">
+            {{ selectedEvent?.description || 'Cơ hội sở hữu các thiết bị điện tử, máy móc cơ khí chính hãng với mức giá
+            hấp dẫn nhất.' }}
           </p>
+          <!-- Thông tin giảm giá + countdown -->
+          <div class="flex gap-3 mt-4" *ngIf="selectedEvent">
+            <p-tag [value]="'Giảm ' + selectedEvent.discountPercent + '%'" severity="warn" icon="pi pi-tag"
+              style="font-size: 1rem; padding: 0.5rem 1rem;" />
+            <p-tag [value]="daysLeft + ' ngày còn lại'" severity="info" icon="pi pi-clock" *ngIf="daysLeft > 0" />
+            <p-tag value="Hôm nay là ngày cuối!" severity="danger" icon="pi pi-exclamation-circle"
+              *ngIf="daysLeft === 0" />
+          </div>
         </div>
         <div class="promo-visual hidden md:block">
           <i class="pi pi-gift text-yellow-400"
@@ -24,10 +34,22 @@
   </div>
 
   <div class="container mx-auto pb-8 px-2 md:px-4" style="max-width: 1200px;">
-    <!-- Filter Bar (Optional for now) -->
+
+    <!-- Event Tabs — nếu có nhiều event -->
+    <div class="flex gap-2 mb-5 overflow-x-auto" *ngIf="activeEvents.length > 1">
+      <button *ngFor="let event of activeEvents" pButton [label]="event.name" icon="pi pi-bolt"
+        [class]="selectedEvent?.eventId === event.eventId ? 'p-button-sm' : 'p-button-sm p-button-outlined'"
+        [style.border-color]="event.colorTheme"
+        [style.color]="selectedEvent?.eventId === event.eventId ? '#fff' : event.colorTheme"
+        [style.background]="selectedEvent?.eventId === event.eventId ? event.colorTheme : 'transparent'"
+        (click)="selectEvent(event)">
+      </button>
+    </div>
+
+    <!-- Header đếm sản phẩm -->
     <div class="flex justify-content-between align-items-center mb-5">
-      <h2 class="text-2xl font-bold m-0 flex align-items-center">
-        <span class="w-1rem h-2rem bg-primary mr-2 border-round"></span>
+      <h2 class="text-2xl font-bold m-0 flex align-items-center gap-2">
+        <span class="w-1rem h-2rem bg-primary border-round" style="min-width: 4px; height: 28px;"></span>
         Sản phẩm đang giảm giá ({{ promoProducts.length }})
       </h2>
       <div class="hidden md:flex gap-2">
@@ -59,8 +81,10 @@
         <div class="mb-4">
           <i class="pi pi-search text-6xl text-400"></i>
         </div>
-        <h3 class="text-xl font-medium text-600">Hiện không có sản phẩm nào đang trong chương trình khuyến mãi.</h3>
-        <p class="text-500 mb-4">Vui lòng quay lại sau để cập nhật các ưu đãi mới nhất từ Trung Tín.</p>
+        <h3 class="text-xl font-medium text-600">
+          Hiện không có sản phẩm nào trong chương trình này.
+        </h3>
+        <p class="text-500 mb-4">Vui lòng quay lại sau để cập nhật các ưu đãi mới nhất.</p>
         <button pButton label="Quay lại trang chủ" icon="pi pi-home" (click)="goBack()"></button>
       </div>
       }

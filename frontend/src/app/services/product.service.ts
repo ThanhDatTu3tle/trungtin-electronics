@@ -53,4 +53,8 @@ export class ProductService {
   createProduct() {
     
   }
+
+  getProductsByEvent(eventId: number) {
+    return this.http.post(`${this.apiUrl}/Products/GetAllProducts?eventId=${eventId}`, {});
+  }
 }

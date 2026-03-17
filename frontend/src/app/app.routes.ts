@@ -64,6 +64,10 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/admin-page/products/products.routes').then(m => m.default)
       },
       {
+        path: 'events',
+        loadChildren: () => import('./pages/admin-page/events/events.routes').then(m => m.default)
+      },
+      {
         path: 'orders',
         loadChildren: () => import('./pages/admin-page/orders/orders.routes').then(m => m.default)
       },
