@@ -66,6 +66,10 @@ jobs:
         working-directory: ./frontend   # ← Đổi thành tên folder FE của bạn
         run: npm install --legacy-peer-deps
 
+      - name: 🧹 Clear Angular cache
+        working-directory: ./frontend
+        run: rm -rf .angular/cache
+
       - name: ⚙️ Inject environment variables vào Angular
         working-directory: ./frontend
         run: |
