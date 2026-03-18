@@ -95,7 +95,6 @@ export class HomePage implements OnDestroy {
     if (this.screenWidth >= 768) return 3;
     return 1;
   }
-
   get isDesktop(): boolean {
     return this.screenWidth >= 1024;
   }
@@ -197,11 +196,9 @@ export class HomePage implements OnDestroy {
   isInWishlist(productId: number): boolean {
     return this.wishlistService.isInWishlist(productId);
   }
-
   addCart(product: any) {
     this.cartService.addToCart(product, 1);
   }
-
   addSpotlightToCart(product: any) {
     this.cartService.addToCart(product, 1);
   }
