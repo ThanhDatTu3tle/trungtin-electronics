@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrungTinElectronicsAPI.Models;
 using TrungTinElectronicsAPI.Models.DTOs;
 
 namespace TrungTinElectronicsAPI.Controllers
@@ -50,20 +51,13 @@ namespace TrungTinElectronicsAPI.Controllers
         // POST: api/Events/CreateEvent
         [Authorize(Roles = "admin")]
         [HttpPost("CreateEvent")]
-        public async Task<IActionResult> CreateEvent(
-            [FromQuery] string name,
-            [FromQuery] string? description,
-            [FromQuery] decimal discountPercent,
-            [FromQuery] string? colorTheme,
-            [FromQuery] string? bannerUrl,
-            [FromQuery] DateTime startDate,
-            [FromQuery] DateTime endDate,
-            [FromQuery] bool isActive = true)
+        public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest req)
         {
             try
             {
                 var newEventId = await _eventRepository.CreateEventAsync(
-                    name, description, discountPercent, colorTheme, bannerUrl, startDate, endDate, isActive);
+                    req.Name, req.Description, req.DiscountPercent, req.ColorTheme,
+                    req.BannerUrl, req.StartDate, req.EndDate, req.IsActive);
                 return Ok(new { message = "Event created successfully!", result = 200, eventId = newEventId });
             }
             catch (Exception ex)
@@ -75,23 +69,14 @@ namespace TrungTinElectronicsAPI.Controllers
         // POST: api/Events/UpdateEvent
         [Authorize(Roles = "admin")]
         [HttpPost("UpdateEvent")]
-        public async Task<IActionResult> UpdateEvent(
-            [FromQuery] int eventId,
-            [FromQuery] string? name,
-            [FromQuery] string? description,
-            [FromQuery] decimal? discountPercent,
-            [FromQuery] string? colorTheme,
-            [FromQuery] string? bannerUrl,
-            [FromQuery] DateTime? startDate,
-            [FromQuery] DateTime? endDate,
-            [FromQuery] bool? isActive,
-            [FromQuery] string action = "update")
+        public async Task<IActionResult> UpdateEvent([FromBody] UpdateEventRequest req)
         {
             try
             {
                 var message = await _eventRepository.UpdateEventAsync(
-                    eventId, name, description, discountPercent, colorTheme,
-                    bannerUrl, startDate, endDate, isActive, action);
+                    req.EventId, req.Name, req.Description, req.DiscountPercent,
+                    req.ColorTheme, req.BannerUrl, req.StartDate, req.EndDate,
+                    req.IsActive, req.Action);
                 return Ok(new { message, result = 200 });
             }
             catch (Exception ex)
@@ -103,13 +88,11 @@ namespace TrungTinElectronicsAPI.Controllers
         // POST: api/Events/AssignProductToEvent
         [Authorize(Roles = "admin")]
         [HttpPost("AssignProductToEvent")]
-        public async Task<IActionResult> AssignProductToEvent(
-            [FromQuery] int productId,
-            [FromQuery] int? eventId)
+        public async Task<IActionResult> AssignProductToEvent([FromBody] AssignProductRequest req)
         {
             try
             {
-                var message = await _eventRepository.AssignProductToEventAsync(productId, eventId);
+                var message = await _eventRepository.AssignProductToEventAsync(req.ProductId, req.EventId);
                 return Ok(new { message, result = 200 });
             }
             catch (Exception ex)

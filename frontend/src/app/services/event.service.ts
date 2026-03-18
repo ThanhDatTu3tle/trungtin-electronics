@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 export class EventService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getActiveEvents() {
     return this.http.post(`${this.apiUrl}/Events/GetActiveEvents`, {});
@@ -23,16 +23,10 @@ export class EventService {
     colorTheme: string, bannerUrl: string, startDate: Date,
     endDate: Date, isActive: boolean
   ) {
-    const params = new URLSearchParams({
-      name, description: description || '',
-      discountPercent: discountPercent.toString(),
-      colorTheme: colorTheme || '',
-      bannerUrl: bannerUrl || '',
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      isActive: isActive.toString()
+    return this.http.post(`${this.apiUrl}/Events/CreateEvent`, {
+      name, description, discountPercent, colorTheme,
+      bannerUrl, startDate, endDate, isActive
     });
-    return this.http.post(`${this.apiUrl}/Events/CreateEvent?${params}`, {});
   }
 
   updateEvent(
@@ -40,21 +34,15 @@ export class EventService {
     colorTheme: any, bannerUrl: any, startDate: any, endDate: any,
     isActive: any, action: string = 'update'
   ) {
-    let url = `${this.apiUrl}/Events/UpdateEvent?eventId=${eventId}&action=${action}`;
-    if (name) url += `&name=${encodeURIComponent(name)}`;
-    if (description) url += `&description=${encodeURIComponent(description)}`;
-    if (discountPercent != null) url += `&discountPercent=${discountPercent}`;
-    if (colorTheme) url += `&colorTheme=${encodeURIComponent(colorTheme)}`;
-    if (bannerUrl) url += `&bannerUrl=${encodeURIComponent(bannerUrl)}`;
-    if (startDate) url += `&startDate=${new Date(startDate).toISOString()}`;
-    if (endDate) url += `&endDate=${new Date(endDate).toISOString()}`;
-    if (isActive != null) url += `&isActive=${isActive}`;
-    return this.http.post(url, {});
+    return this.http.post(`${this.apiUrl}/Events/UpdateEvent`, {
+      eventId, name, description, discountPercent, colorTheme,
+      bannerUrl, startDate, endDate, isActive, action
+    });
   }
 
   assignProductToEvent(productId: number, eventId: number | null) {
-    let url = `${this.apiUrl}/Events/AssignProductToEvent?productId=${productId}`;
-    if (eventId != null) url += `&eventId=${eventId}`;
-    return this.http.post(url, {});
+    return this.http.post(`${this.apiUrl}/Events/AssignProductToEvent`, {
+      productId, eventId
+    });
   }
 }
