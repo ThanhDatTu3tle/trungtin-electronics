@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -44,12 +44,15 @@ export class Events implements OnInit {
     private eventService: EventService,
     private productService: ProductService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-    this.loadEvents();
-    this.loadAllProducts();
+    setTimeout(() => {
+      this.loadEvents();
+      this.loadAllProducts();
+    }, 0);
   }
 
   // ─────────────────────────────────────────────
@@ -75,6 +78,7 @@ export class Events implements OnInit {
     this.eventService.getAllEvents().subscribe({
       next: (res: any) => {
         this.events = Array.isArray(res) ? res : res.data || [];
+        this.cdr.detectChanges()
       },
       error: () => this.messageService.add({
         severity: 'error', summary: 'Lỗi', detail: 'Không thể tải danh sách event'

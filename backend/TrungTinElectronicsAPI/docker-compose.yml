@@ -23,6 +23,8 @@ services:
       ASPNETCORE_URLS: "http://+:8080"
       ASPNETCORE_ENVIRONMENT: "Production"
       Jwt__Key: "super_super_secret_key_123456789"
+      Jwt__Issuer: "trungtinelectronics"
+      Jwt__Audience: "trungtinelectronics"
       ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TrungTinElectronicsDB;User Id=sa;Password=Thanhdat03!Pass123;TrustServerCertificate=True;"
       CloudinarySettings__CloudName: "devw2kryy"
       CloudinarySettings__ApiKey: "317333323879812"

@@ -272,19 +272,18 @@ public class AuthController : ControllerBase
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // duy nhất
-            new Claim(ClaimTypes.Name, user.FullName ?? user.Email),   // fallback nếu FullName null
-            new Claim(ClaimTypes.Role, user.Role ?? "User")           // default role
-        };
-
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FullName ?? user.Email),
+        new Claim(ClaimTypes.Role, user.Role ?? "User")
+    };
         var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],        // ← thêm
+            audience: _config["Jwt:Audience"],    // ← thêm
             claims: claims,
             expires: DateTime.UtcNow.AddHours(6),
             signingCredentials: creds);
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
