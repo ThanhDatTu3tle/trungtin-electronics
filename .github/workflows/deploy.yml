@@ -66,6 +66,10 @@ jobs:
         working-directory: ./frontend   # ← Đổi thành tên folder FE của bạn
         run: npm install --legacy-peer-deps
 
+      - name: 🧹 Clear Angular cache
+        working-directory: ./frontend
+        run: rm -rf .angular/cache
+
       - name: ⚙️ Inject environment variables vào Angular
         working-directory: ./frontend
         run: |
@@ -89,7 +93,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "frontend/dist/trung-tin-electronics/browser/*"
           target: "/var/www/html/browser"
-          strip_components: 5
+          strip_components: 4
 
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v1.0.0
