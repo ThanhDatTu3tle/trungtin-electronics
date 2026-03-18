@@ -93,7 +93,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "frontend/dist/trung-tin-electronics/browser/*"
           target: "/var/www/html/browser"
-          strip_components: 5
+          strip_components: 4
 
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v1.0.0
