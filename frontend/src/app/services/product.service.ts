@@ -80,30 +80,26 @@ export class ProductService {
   }
 
   createProduct(data: CreateProductRequest): Observable<CreateProductResponse> {
-    let params = new HttpParams()
-      .set('categoryId', data.categoryId)
-      .set('productName', data.productName)
-      .set('price', data.price.toString())
-      .set('stock', (data.stock ?? 0).toString())
-      .set('isNew', (data.isNew ?? false).toString())
-      .set('isFeatured', (data.isFeatured ?? false).toString())
-      .set('isSpotlight', (data.isSpotlight ?? false).toString());
-
-    // Các field optional - chỉ append nếu có giá trị
-    if (data.description) params = params.set('description', data.description);
-    if (data.imageUrl) params = params.set('imageUrl', data.imageUrl);
-    if (data.code) params = params.set('code', data.code);
-    if (data.discountPrice) params = params.set('discountPrice', data.discountPrice.toString());
-    if (data.currency) params = params.set('currency', data.currency);
-    if (data.brand) params = params.set('brand', data.brand);
+    const payload = {
+      categoryId: data.categoryId,
+      productName: data.productName,
+      description: data.description ?? null,
+      price: data.price,
+      imageUrl: data.imageUrl ?? null,
+      code: data.code ?? null,
+      discountPrice: data.discountPrice ?? null,
+      currency: data.currency ?? 'VND',
+      brand: data.brand ?? null,
+      stock: data.stock ?? 0,
+      isNew: data.isNew ?? false,
+      isFeatured: data.isFeatured ?? false,
+      isSpotlight: data.isSpotlight ?? false
+    };
 
     return this.http.post<CreateProductResponse>(
-      this.apiUrl,
-      null, // body null vì BE dùng [FromQuery]
-      {
-        headers: this.getAuthHeaders(),
-        params
-      }
+      this.apiUrl + '/CreateProduct',
+      payload, // ✅ gửi JSON body
+      { headers: this.getAuthHeaders() }
     );
   }
 
