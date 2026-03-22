@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Product } from '../../../models/product.model';
-import { ProductService } from '../../../services/product.service';
+import { ProductService, CreateProductRequest } from '../../../services/product.service';
 import { UploadService } from '../../../services/upload.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category';
@@ -390,30 +390,60 @@ export class Products {
   saveProduct() {
     this.submitted = true;
 
-    if (this.product.productName?.trim()) {
+    if (this.product.productName?.trim() && this.product.categoryId) {
       if (this.product.productId) {
+        // Update existing product (TODO: call update API when available)
         this.products[this.findIndexById(this.product.productId)] = this.product;
+        this.products = [...this.products];
+        this.productDialog = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Updated',
+          summary: 'Thành công',
+          detail: 'Cập nhật sản phẩm thành công',
           life: 3000,
         });
       } else {
-        this.product.productId = +this.createId();
-        this.product.imageUrl = 'product-placeholder.svg';
-        this.products.push(this.product);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successful',
-          detail: 'Product Created',
-          life: 3000,
+        // Create new product via API
+        const request: CreateProductRequest = {
+          categoryId: this.product.categoryId?.toString() || '',
+          productName: this.product.productName,
+          description: this.product.description,
+          price: this.product.price || 0,
+          imageUrl: this.product.imageUrl,
+          code: this.product.code,
+          discountPrice: this.product.discountPrice ?? undefined,
+          currency: this.product.currency,
+          brand: this.product.brand,
+          stock: this.product.stock || 0,
+          isNew: this.product.isNew || false,
+          isFeatured: this.product.isFeatured || false,
+          isSpotlight: this.product.isSpotlight || false,
+        };
+
+        this.productService.createProduct(request).subscribe({
+          next: (res) => {
+            this.product.productId = res.productId;
+            this.products.push(this.product);
+            this.products = [...this.products];
+            this.productDialog = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Thành công',
+              detail: 'Tạo sản phẩm thành công',
+              life: 3000,
+            });
+          },
+          error: (err) => {
+            console.error('Create product failed', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Lỗi',
+              detail: 'Tạo sản phẩm thất bại',
+              life: 3000,
+            });
+          },
         });
       }
-
-      this.products = [...this.products];
-      this.productDialog = false;
-      // this.product = {};
     }
   }
 

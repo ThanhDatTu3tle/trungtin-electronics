@@ -236,6 +236,15 @@
                         buộc.</small>
                 </div>
 
+                <!-- Category -->
+                <div class="flex flex-column gap-2">
+                    <label for="dialogCategory" class="font-bold">Danh mục</label>
+                    <p-select id="dialogCategory" [options]="categories" [(ngModel)]="product.categoryId"
+                        optionLabel="categoryName" optionValue="categoryId" [filter]="true" filterBy="categoryName"
+                        [showClear]="true" placeholder="Chọn danh mục" class="w-full" styleClass="w-full" />
+                    <small class="text-red-500" *ngIf="submitted && !product.categoryId">Danh mục là bắt buộc.</small>
+                </div>
+
                 <!-- Code & Brand & Status -->
                 <div class="flex flex-row gap-3">
                     <div class="flex-1 flex flex-column gap-2">
