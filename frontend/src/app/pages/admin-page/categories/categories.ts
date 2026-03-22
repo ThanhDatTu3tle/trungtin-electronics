@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Helper } from '../../../shared/helpers/_helper';
 
 import { CategoryService } from '../../../services/category.service';
+import { UploadService } from '../../../services/upload.service';
 
 import { MenuItem, ConfirmationService, MessageService } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -65,7 +66,7 @@ export class Categories {
     private cdr: ChangeDetectorRef,
     private confirmationService: ConfirmationService, 
     private messageService: MessageService,
-
+    private uploadService: UploadService,
     private categoryService: CategoryService
   ) {}
 
@@ -184,9 +185,32 @@ export class Categories {
   }
 
   onSelectFile(event: any) {
-    console.log(event)
+    const file = event.files[0];
+    if (file) {
+      this.uploadService.uploadImage(file).subscribe({
+        next: (res) => {
+          this.icon = res.url;
+          this.cdr.detectChanges();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Thành công',
+            detail: 'Tải icon lên thành công',
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          console.error('Upload failed', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Lỗi',
+            detail: 'Tải icon lên thất bại',
+            life: 3000,
+          });
+        },
+      });
+    }
   }
   onUploadIcon(event: any) {
-    console.log(event)
+    console.log(event);
   }
 }

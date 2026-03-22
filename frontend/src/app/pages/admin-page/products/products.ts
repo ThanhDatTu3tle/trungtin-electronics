@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
+import { UploadService } from '../../../services/upload.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category';
 
@@ -82,6 +83,8 @@ export class Products {
 
   submitted: boolean = false;
 
+  uploading: boolean = false;
+
   statuses!: any[];
 
   @ViewChild('dt') dt!: Table;
@@ -107,6 +110,7 @@ export class Products {
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
+    private uploadService: UploadService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private cd: ChangeDetectorRef,
@@ -232,11 +236,31 @@ export class Products {
   onSelect(event: any) {
     const file = event.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.product.imageUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      this.uploading = true;
+      this.uploadService.uploadImage(file).subscribe({
+        next: (res) => {
+          this.product.imageUrl = res.url;
+          this.uploading = false;
+          this.cd.detectChanges();
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Thành công',
+            detail: 'Tải ảnh lên thành công',
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          this.uploading = false;
+          console.error('Upload failed', err);
+          this.cd.detectChanges();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Lỗi',
+            detail: 'Tải ảnh lên thất bại',
+            life: 3000,
+          });
+        },
+      });
     }
   }
 

@@ -197,21 +197,32 @@
             <!-- Left Column: Image & Upload -->
             <div class="flex flex-column align-items-center gap-3 w-4">
                 <div class="border-2 border-dashed border-300 border-round p-3 flex align-items-center justify-content-center surface-ground w-full"
-                    style="aspect-ratio: 1/1; position: relative;">
-                    <img [src]="product.imageUrl || 'https://primefaces.org/cdn/primeng/images/demo/product/placeholder.svg'"
-                        [alt]="product.productName" class="w-full h-full" style="object-fit: contain;"
-                        *ngIf="product.imageUrl; else placeholder" />
+                    style="aspect-ratio: 1/1; position: relative; overflow: hidden;">
+                    <!-- Skeleton Loading Overlay -->
+                    <div *ngIf="uploading" class="upload-skeleton-overlay">
+                        <div class="upload-skeleton-content">
+                            <i class="pi pi-spin pi-spinner text-4xl mb-2" style="color: var(--primary-color);"></i>
+                            <span class="text-sm font-semibold" style="color: var(--primary-color);">Đang tải ảnh...</span>
+                        </div>
+                        <div class="skeleton-shimmer"></div>
+                    </div>
+                    <!-- Image Preview -->
+                    <img [src]="product.imageUrl"
+                        [alt]="product.productName" class="w-full h-full upload-fade-in" style="object-fit: contain;"
+                        *ngIf="product.imageUrl && !uploading; else placeholder" />
                     <ng-template #placeholder>
-                        <div class="flex flex-column align-items-center text-500">
+                        <div class="flex flex-column align-items-center text-500" *ngIf="!uploading">
                             <i class="pi pi-image text-4xl mb-2"></i>
                             <span class="text-sm">No Image</span>
                         </div>
                     </ng-template>
                 </div>
                 <!-- File Upload Component -->
-                <p-fileUpload mode="basic" chooseLabel="Chọn hình ảnh" chooseIcon="pi pi-upload" name="demo[]"
-                    url="https://www.primefaces.org/cdn/api/upload.php" accept="image/*" maxFileSize="1000000"
-                    (onSelect)="onSelect($event)" [auto]="true" styleClass="w-full" />
+                <div class="flex justify-content-center w-full">
+                    <p-fileUpload mode="basic" chooseLabel="Chọn hình ảnh" chooseIcon="pi pi-upload" name="demo[]"
+                        accept="image/*" maxFileSize="1000000"
+                        (onSelect)="onSelect($event)" [disabled]="uploading" />
+                </div>
             </div>
 
             <!-- Right Column: Form Fields -->
