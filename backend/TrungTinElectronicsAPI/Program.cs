@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using TrungTinElectronics.Repositories;
+using TrungTinElectronics.Services;
 using TrungTinElectronicsAPI.Data;
 using TrungTinElectronicsAPI.Models;
 using TrungTinElectronicsAPI.Repositories.Category;
@@ -108,6 +110,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddScoped<OrderRepository>();
+builder.Services.AddScoped<OrderService>();
 //builder.Services.AddSwaggerGen();
 
 // Inject repository Product

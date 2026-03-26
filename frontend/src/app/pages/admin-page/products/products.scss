@@ -80,3 +80,14 @@
   flex-direction: column;
   align-items: start;
 }
+
+// Fix z-index issue for p-panel when scrolling
+:host ::ng-deep p-panel {
+  position: relative;
+  z-index: 1;
+}
+
+// Hide "No file chosen" text in edit mode
+.hide-file-name ::ng-deep .p-fileupload-filename {
+  display: none !important;
+}

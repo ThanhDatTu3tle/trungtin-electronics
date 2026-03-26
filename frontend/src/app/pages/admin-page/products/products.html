@@ -191,7 +191,8 @@
     </p-table>
 </div>
 
-<p-dialog [(visible)]="productDialog" [style]="{ width: '1200px' }" header="Chi tiết sản phẩm" [modal]="true">
+<p-dialog [(visible)]="productDialog" [style]="{ width: '1234px', height: '789px' }" header="Chi tiết sản phẩm"
+    [modal]="true">
     <ng-template #content>
         <div class="flex flex-row gap-4">
             <!-- Left Column: Image & Upload -->
@@ -202,14 +203,14 @@
                     <div *ngIf="uploading" class="upload-skeleton-overlay">
                         <div class="upload-skeleton-content">
                             <i class="pi pi-spin pi-spinner text-4xl mb-2" style="color: var(--primary-color);"></i>
-                            <span class="text-sm font-semibold" style="color: var(--primary-color);">Đang tải ảnh...</span>
+                            <span class="text-sm font-semibold" style="color: var(--primary-color);">{{ uploadingText
+                                }}</span>
                         </div>
                         <div class="skeleton-shimmer"></div>
                     </div>
                     <!-- Image Preview -->
-                    <img [src]="product.imageUrl"
-                        [alt]="product.productName" class="w-full h-full upload-fade-in" style="object-fit: contain;"
-                        *ngIf="product.imageUrl && !uploading; else placeholder" />
+                    <img [src]="product.imageUrl" [alt]="product.productName" class="w-full h-full upload-fade-in"
+                        style="object-fit: contain;" *ngIf="product.imageUrl && !uploading; else placeholder" />
                     <ng-template #placeholder>
                         <div class="flex flex-column align-items-center text-500" *ngIf="!uploading">
                             <i class="pi pi-image text-4xl mb-2"></i>
@@ -218,10 +219,18 @@
                     </ng-template>
                 </div>
                 <!-- File Upload Component -->
-                <div class="flex justify-content-center w-full">
-                    <p-fileUpload mode="basic" chooseLabel="Chọn hình ảnh" chooseIcon="pi pi-upload" name="demo[]"
-                        accept="image/*" maxFileSize="1000000"
+                <div class="flex justify-content-center w-full" [ngClass]="{'hide-file-name': isEditing}">
+                    <p-fileUpload mode="basic" [chooseLabel]="isEditing ? 'Đổi hình ảnh' : 'Chọn hình ảnh'"
+                        chooseIcon="pi pi-upload" name="demo[]" accept="image/*" maxFileSize="1000000"
                         (onSelect)="onSelect($event)" [disabled]="uploading" />
+                </div>
+                <!-- Checkbox Xóa nền -->
+                <div class="flex align-items-center gap-2">
+                    <p-checkbox [(ngModel)]="removeBackground" [binary]="true" inputId="removeBg" />
+                    <label for="removeBg" class="cursor-pointer text-sm">
+                        <i class="pi pi-sparkles mr-1" style="color: var(--primary-color);"></i>
+                        Xóa nền
+                    </label>
                 </div>
             </div>
 
@@ -302,7 +311,7 @@
                 <!-- Description -->
                 <div class="flex flex-column gap-2 h-full">
                     <label for="description" class="font-bold">Mô tả chi tiết</label>
-                    <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="4" fluid
+                    <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="10" fluid
                         class="h-full" style="resize: none;"></textarea>
                 </div>
 

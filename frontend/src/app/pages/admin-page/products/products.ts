@@ -85,6 +85,8 @@ export class Products {
 
   uploading: boolean = false;
 
+  backgroundOption: string = 'default';
+
   statuses!: any[];
 
   @ViewChild('dt') dt!: Table;
@@ -114,7 +116,7 @@ export class Products {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   exportCSV(event: any) {
     this.dt.exportCSV();
@@ -131,9 +133,9 @@ export class Products {
     this.categoryService.getAllCategories().subscribe({
       next: (response: any) => {
         if (response.message === 'success' || response.data) {
-           this.categories = response.data || [];
+          this.categories = response.data || [];
         } else {
-           this.categories = [];
+          this.categories = [];
         }
         this.cd.detectChanges();
       },
@@ -158,12 +160,12 @@ export class Products {
         // Client-side filter for discount products
         if (this.filterHasDiscount) {
           this.products = data.filter(p => {
-             const hasDiscount = p.discountPrice && p.discountPrice > 0;
-             if (!hasDiscount) return false;
-             if (this.filterMinDiscount !== null) {
-                return p.discountPrice! >= this.filterMinDiscount;
-             }
-             return true;
+            const hasDiscount = p.discountPrice && p.discountPrice > 0;
+            if (!hasDiscount) return false;
+            if (this.filterMinDiscount !== null) {
+              return p.discountPrice! >= this.filterMinDiscount;
+            }
+            return true;
           });
         } else {
           this.products = data;
@@ -233,45 +235,43 @@ export class Products {
     }));
   }
 
+  removeBackground: boolean = false;
+  uploadingText: string = 'Đang tải ảnh...';
   onSelect(event: any) {
     const file = event.files[0];
-    if (file) {
-      this.uploading = true;
-      this.uploadService.uploadImage(file).subscribe({
-        next: (res) => {
-          this.product.imageUrl = res.url;
-          this.uploading = false;
-          this.cd.detectChanges();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Thành công',
-            detail: 'Tải ảnh lên thành công',
-            life: 3000,
-          });
-        },
-        error: (err) => {
-          this.uploading = false;
-          console.error('Upload failed', err);
-          this.cd.detectChanges();
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Lỗi',
-            detail: 'Tải ảnh lên thất bại',
-            life: 3000,
-          });
-        },
-      });
-    }
+    this.uploading = true;
+    this.uploadingText = this.removeBackground ? 'Đang xóa nền...' : 'Đang tải ảnh...';
+
+    this.uploadService.uploadImage(file).subscribe({
+      next: (res) => {
+        let url = res.url;
+        if (this.removeBackground) {
+          url = url.replace('/upload/', '/upload/e_background_removal/');
+        }
+        this.product.imageUrl = url;
+        this.uploading = false;
+      },
+      error: (err) => {
+        console.error('Upload thất bại:', err);
+        this.uploading = false;
+      }
+    });
+  }
+
+  get isEditing(): boolean {
+    return !!this.product?.productId;
   }
 
   openNew() {
     this.product = {} as Product;
     this.submitted = false;
+    this.backgroundOption = 'default';
     this.productDialog = true;
   }
 
   editProduct(product: Product) {
     this.product = { ...product };
+    this.backgroundOption = 'default';
     this.productDialog = true;
   }
 
@@ -483,9 +483,9 @@ export class Products {
         const wsname: string = wb.SheetNames[0];
         const ws: XLSX.WorkSheet = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
-        
+
         console.log('Imported Data:', data);
-        
+
         // TODO: Call API to save products
         // this.productService.bulkCreateProducts(data).subscribe(...)
 
