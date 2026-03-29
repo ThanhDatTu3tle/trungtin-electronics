@@ -64,11 +64,11 @@ export class Categories {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private confirmationService: ConfirmationService, 
+    private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private uploadService: UploadService,
     private categoryService: CategoryService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.itemsToolbar = [
@@ -96,8 +96,6 @@ export class Categories {
           item.updatedDate = Helper.formatDateTime(item.updatedDate);
           item.statusName = item.status == -1 ? 'Any' : (item.status == 1 ? 'Sẵn sàng' : 'Đã xóa')
         });
-
-        console.log(this.categories);
         this.cdr.detectChanges();
       }
     });

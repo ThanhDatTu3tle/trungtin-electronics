@@ -11,6 +11,9 @@ using TrungTinElectronicsAPI.Repositories.Category;
 using TrungTinElectronicsAPI.Repositories.Event;
 using TrungTinElectronicsAPI.Repositories.Product;
 using TrungTinElectronicsAPI.Services;
+using Hangfire;
+using Hangfire.SqlServer;
+using TrungTinElectronics.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 // optional: load user-secrets already done earlier
@@ -129,6 +132,28 @@ builder.Services.Configure<CloudinarySettings>(
     builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<CloudinaryService>();
 
+// Jobs
+builder.Services.AddScoped<CancelExpiredOrdersJob>();
+
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true,
+        }
+    )
+);
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 //if (app.Environment.IsDevelopment())
@@ -137,6 +162,7 @@ var app = builder.Build();
 //    app.UseSwaggerUI();
 //}
 
+// 1. Middleware trước
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -151,5 +177,18 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// 2. Hangfire dashboard
+app.UseHangfireDashboard("/hangfire");
+
+// 3. Đăng ký Cron job SAU khi app đã build xong
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    RecurringJob.AddOrUpdate<CancelExpiredOrdersJob>(
+        recurringJobId: "cancel-expired-orders",
+        methodCall: job => job.ExecuteAsync(),
+        cronExpression: "*/5 * * * *"
+    );
+});
 
 app.Run();
