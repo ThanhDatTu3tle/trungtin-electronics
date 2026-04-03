@@ -40,3 +40,14 @@ public class OrderItemDetail
     public decimal? DiscountPrice { get; set; }
     public decimal Subtotal { get; set; }
 }
+
+// Job payload cho Redis Queue
+public class PaymentCallbackJob
+{
+    public int OrderID { get; set; }
+    public string TransactionId { get; set; } = "";
+    public decimal Amount { get; set; }
+    public string ResponseCode { get; set; } = ""; // "00" = success
+    public string Provider { get; set; } = ""; // "VNPAY" | "MOMO"
+    public int AttemptCount { get; set; } = 0;
+}

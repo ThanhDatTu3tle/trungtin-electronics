@@ -14,6 +14,7 @@ using TrungTinElectronicsAPI.Services;
 using Hangfire;
 using Hangfire.SqlServer;
 using TrungTinElectronics.Jobs;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 // optional: load user-secrets already done earlier
@@ -153,6 +154,14 @@ builder.Services.AddHangfire(config => config
 );
 
 builder.Services.AddHangfireServer();
+
+var redisConn = await ConnectionMultiplexer.ConnectAsync(
+    builder.Configuration.GetConnectionString("Redis")!);
+builder.Services.AddSingleton<IConnectionMultiplexer>(redisConn);
+builder.Services.AddSingleton<RedisQueueService>();
+
+// Worker chạy nền xử lý payment queue
+builder.Services.AddHostedService<PaymentCallbackWorker>();
 
 var app = builder.Build();
 
