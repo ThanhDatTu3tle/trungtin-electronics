@@ -1,0 +1,33 @@
+<div class="flex justify-content-center align-items-center" style="min-height: 70vh;">
+  <div class="surface-card p-6 border-round shadow-2 text-center" style="max-width: 480px; width: 100%;">
+
+    @if (status === 'success') {
+    <i class="pi pi-check-circle" style="font-size: 5rem; color: #22c55e;"></i>
+    <h1 class="text-2xl font-bold mt-3 mb-2">Thanh toán thành công!</h1>
+    <p class="text-600 mb-4">Đơn hàng #{{ orderId }} đã được xác nhận.<br>Cảm ơn bạn đã mua hàng!</p>
+    <p-button label="Về trang chủ" icon="pi pi-home" styleClass="w-full" (onClick)="goHome()">
+    </p-button>
+
+    } @else if (status === 'failed') {
+    <i class="pi pi-times-circle" style="font-size: 5rem; color: #ef4444;"></i>
+    <h1 class="text-2xl font-bold mt-3 mb-2">Thanh toán thất bại</h1>
+    <p class="text-600 mb-4">Đơn hàng #{{ orderId }} chưa được thanh toán.<br>Vui lòng thử lại.</p>
+    <p-button label="Thử lại" icon="pi pi-refresh" styleClass="w-full mb-2" (onClick)="goToCart()">
+    </p-button>
+    <p-button label="Về trang chủ" icon="pi pi-home" severity="secondary"
+      [outlined]="true" styleClass="w-full" (onClick)="goHome()">
+    </p-button>
+
+    } @else if (status === 'expired') {
+    <i class="pi pi-clock" style="font-size: 5rem; color: #f59e0b;"></i>
+    <h1 class="text-2xl font-bold mt-3 mb-2">Đơn hàng đã hết hạn</h1>
+    <p class="text-600 mb-4">Đơn hàng #{{ orderId }} đã bị hủy do quá thời gian thanh toán.</p>
+    <p-button label="Đặt lại" icon="pi pi-shopping-cart" styleClass="w-full mb-2" (onClick)="goToCart()">
+    </p-button>
+    <p-button label="Về trang chủ" icon="pi pi-home" severity="secondary"
+      [outlined]="true" styleClass="w-full" (onClick)="goHome()">
+    </p-button>
+    }
+
+  </div>
+</div>

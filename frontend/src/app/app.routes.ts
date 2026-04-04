@@ -37,9 +37,20 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/user-profile/user-profile.routes').then(m => m.default)
       },
       {
-        path: 'promo-product',
-        loadChildren: () => import('./pages/promo-product-page/promo-product-page.routes').then(m => m.default)
-      }
+        path: 'checkout',
+        loadChildren: () =>
+          import('./pages/checkout/checkout.routes').then(m => m.CHECKOUT_ROUTES)
+      },
+      {
+        path: 'invoice/:id',
+        loadChildren: () =>
+          import('./pages/invoice/invoice.routes').then(m => m.INVOICE_ROUTES)
+      },
+      {
+        path: 'payment-result',
+        loadComponent: () =>
+          import('./pages/payment-result/payment-result').then(m => m.PaymentResultPage)
+      },
     ]
   },
   {
@@ -62,10 +73,6 @@ export const routes: Routes = [
       {
         path: 'products',
         loadChildren: () => import('./pages/admin-page/products/products.routes').then(m => m.default)
-      },
-      {
-        path: 'events',
-        loadChildren: () => import('./pages/admin-page/events/events.routes').then(m => m.default)
       },
       {
         path: 'orders',

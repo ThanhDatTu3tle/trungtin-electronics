@@ -159,12 +159,7 @@ export class CartPage implements OnInit {
    * Proceed to checkout
    */
   proceedToCheckout(): void {
-    // TODO: Implement checkout page
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Thông báo',
-      detail: 'Chức năng thanh toán đang được phát triển'
-    });
+    this.router.navigate(['/checkout']);
   }
 
   /**
