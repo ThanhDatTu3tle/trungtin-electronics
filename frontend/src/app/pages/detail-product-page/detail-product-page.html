@@ -72,7 +72,7 @@
                     @if (product.discountPrice) {
                     <div class="flex align-items-center gap-3">
                         <span class="original-price text-xl text-500 line-through">{{ product.price | number }} đ</span>
-                        <span class="discount-price text-3xl font-bold text-primary">{{ product.discountPrice | number
+                        <span class="discount-price text-3xl font-bold text-primary">{{ product.price*((100 - product.discountPrice)/100) | number
                             }} đ</span>
                     </div>
                     } @else {

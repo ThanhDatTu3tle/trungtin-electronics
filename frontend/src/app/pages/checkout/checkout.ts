@@ -61,8 +61,9 @@ export class CheckoutPage implements OnInit {
     return this.cartService.getTotalPrice();
   }
 
+  // const price = item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price;
   getItemSubtotal(item: CartItem): number {
-    return (item.discountPrice || item.price) * item.quantity;
+    return (item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price) * item.quantity;
   }
 
   placeOrder(): void {

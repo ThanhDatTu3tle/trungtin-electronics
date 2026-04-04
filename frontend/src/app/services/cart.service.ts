@@ -152,7 +152,7 @@ export class CartService {
    */
   getTotalPrice(): number {
     return this.cartItems.reduce((total, item) => {
-      const price = item.discountPrice || item.price;
+      const price = item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price;
       return total + (price * item.quantity);
     }, 0);
   }

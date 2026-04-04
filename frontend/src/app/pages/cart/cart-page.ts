@@ -144,7 +144,7 @@ export class CartPage implements OnInit {
    * Get item subtotal
    */
   getItemSubtotal(item: CartItem): number {
-    const price = item.discountPrice || item.price;
+    const price = item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price;
     return price * item.quantity;
   }
 
