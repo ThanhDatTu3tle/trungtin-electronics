@@ -63,29 +63,25 @@ export class CheckoutPage implements OnInit {
 
   // const price = item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price;
   getItemSubtotal(item: CartItem): number {
-    return (item.discountPrice ? item.price*((100 - item.discountPrice)/100) : item.price) * item.quantity;
+    return (
+      (item.discountPrice
+        ? item.price * ((100 - item.discountPrice) / 100)
+        : item.price) * item.quantity
+    );
   }
 
   placeOrder(): void {
-    const user = this.authService.getUserInfo();
-    if (!user) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Chưa đăng nhập',
-        detail: 'Vui lòng đăng nhập để đặt hàng',
-      });
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    // Lấy userId từ JWT claim
-    const userId = Number(
-      user[
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-      ],
-    );
-
     this.isLoading = true;
+
+    // Lấy userId nếu đã đăng nhập, không thì dùng 0 (khách vãng lai)
+    const user = this.authService.getUserInfo();
+    const userId = user
+      ? Number(
+          user[
+            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+          ],
+        )
+      : 0;
 
     const request = {
       userID: userId,
